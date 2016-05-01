@@ -52,11 +52,11 @@ Now, here's one possible solution for the callback:
       if let image = image {
         let imageData = UIImageJPEGRepresentation(image, 0.8)!
         let imageFile = PFFile(data: imageData)
-        imageFile.save()
+        try! imageFile!.save()
 >
         let post = PFObject(className: "Post")
         post["imageFile"] = imageFile
-        post.save()
+        try! post.save()
       }
     })
 
