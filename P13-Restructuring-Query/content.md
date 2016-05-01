@@ -75,12 +75,16 @@ Update the `viewDidAppear` method in `TimelineViewController` to look as followi
       super.viewDidAppear(animated)
 >
       ParseHelper.timelineRequestForCurrentUser {
-        (result: [AnyObject]?, error: NSError?) -> Void in
+        (result: [PFObject]?, error: NSError?) -> Void in
           self.posts = result as? [Post] ?? []
 >
           for post in self.posts {
-            let data = post.imageFile?.getData()
-            post.image = UIImage(data: data!, scale:1.0)
+            do {
+              let data = try post.imageFile?.getData()
+              post.image.value = UIImage(data: data!, scale:1.0)
+            } catch {
+              print("could not get image")
+            }
           }
 >
           self.tableView.reloadData()
