@@ -124,7 +124,7 @@ All we need to do is implement the `loadInRange` method so that the component ca
     func loadInRange(range: Range<Int>, completionBlock: ([Post]?) -> Void) {
       // 1
       ParseHelper.timelineRequestForCurrentUser(range) {
-        (result: [AnyObject]?, error: NSError?) -> Void in
+        (result: [PFObject]?, error: NSError?) -> Void in
           // 2
           let posts = result as? [Post] ?? []
           // 3
