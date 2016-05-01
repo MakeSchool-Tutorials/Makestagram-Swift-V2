@@ -18,7 +18,7 @@ We will start with adding new Parse queries; however, I first want to suggest so
 
 Take a look at the query we have right now:
 
-    static func timelineRequestForCurrentUser(completionBlock: PFArrayResultBlock) {
+    static func timelineRequestForCurrentUser(completionBlock: PFQueryArrayResultBlock) {
       let followingQuery = PFQuery(className: "Follow")
       followingQuery.whereKey("fromUser", equalTo:PFUser.currentUser()!)
 
@@ -84,7 +84,7 @@ With these constants in place, we can now update our timeline query to use them.
 > [action]
 Change the timeline query to use constants instead of string literals:
 >
-    static func timelineRequestForCurrentUser(completionBlock: PFArrayResultBlock) {
+    static func timelineRequestForCurrentUser(completionBlock: PFQueryArrayResultBlock) {
       let followingQuery = PFQuery(className: ParseFollowClass)
       followingQuery.whereKey(ParseLikeFromUser, equalTo:PFUser.currentUser()!)
 >
@@ -191,7 +191,7 @@ Hint: it should take a completion block and call it when the query completes! We
 And here's our solution:
 >
     // 1
-    static func likesForPost(post: Post, completionBlock: PFArrayResultBlock) {
+    static func likesForPost(post: Post, completionBlock: PFQueryArrayResultBlock) {
       let query = PFQuery(className: ParseLikeClass)
       query.whereKey(ParseLikeToPost, equalTo: post)
       // 2
@@ -202,7 +202,7 @@ And here's our solution:
 
 There are two interesting aspects that should be highlighted:
 
-1. Our method is taking a `PFArrayResultBlock` as an argument. We've used the same approach in our `timelineRequestForCurrentUser` method. The `PFArrayResultBlock` has the following signature:
+1. Our method is taking a `PFQueryArrayResultBlock` as an argument. We've used the same approach in our `timelineRequestForCurrentUser` method. The `PFQueryArrayResultBlock` has the following signature:
 
        ([AnyObject]?, NSError?) -> Void
 
@@ -241,7 +241,7 @@ Just to make sure we're on the same page, here's what all the queries that we ju
       }
     }
 
-    static func likesForPost(post: Post, completionBlock: PFArrayResultBlock) {
+    static func likesForPost(post: Post, completionBlock: PFQueryArrayResultBlock) {
       let query = PFQuery(className: ParseLikeClass)
       query.whereKey(ParseLikeToPost, equalTo: post)
       query.includeKey(ParseLikeFromUser)

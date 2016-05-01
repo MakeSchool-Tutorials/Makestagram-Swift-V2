@@ -27,7 +27,7 @@ Let's implement the change and discuss it afterwards.
 Modify the `timelineRequestForCurrentUser` method to look as follows:
 >
     // 1
-    static func timelineRequestForCurrentUser(range: Range<Int>, completionBlock: PFArrayResultBlock) {
+    static func timelineRequestForCurrentUser(range: Range<Int>, completionBlock: PFQueryArrayResultBlock) {
       let followingQuery = PFQuery(className: ParseFollowClass)
       followingQuery.whereKey(ParseLikeFromUser, equalTo:PFUser.currentUser()!)
 >
