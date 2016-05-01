@@ -125,7 +125,7 @@ Update `uploadPost` so that it looks as follows:
 >
         let imageData = UIImageJPEGRepresentation(image, 0.8)
         let imageFile = PFFile(data: imageData!)
-        imageFile.saveInBackgroundWithBlock(nil)
+        imageFile!.saveInBackgroundWithBlock(nil)
 >
         user = PFUser.currentUser()
         self.imageFile = imageFile
