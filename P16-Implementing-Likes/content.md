@@ -167,9 +167,9 @@ Here's our solution:
       query.whereKey(ParseLikeFromUser, equalTo: user)
       query.whereKey(ParseLikeToPost, equalTo: post)
 >
-      query.findObjectsInBackgroundWithBlock { (results: [AnyObject]?, error: NSError?) -> Void in
+      query.findObjectsInBackgroundWithBlock { (results: [PFObject]?, error: NSError?) -> Void in
         // 2
-        if let results = results as? [PFObject] {
+        if let results = results {
           for likes in results {
             likes.deleteInBackgroundWithBlock(nil)
           }
@@ -309,13 +309,12 @@ Add the following method to the `Post` class:
       }
 >
       // 2
-      ParseHelper.likesForPost(self, completionBlock: { (var likes: [AnyObject]?, error: NSError?) -> Void in
+      ParseHelper.likesForPost(self, completionBlock: { (var likes: [PFObject]?, error: NSError?) -> Void in
         // 3
         likes = likes?.filter { like in like[ParseHelper.ParseLikeFromUser] != nil }
 >
         // 4
         self.likes.value = likes?.map { like in
-          let like = like as! PFObject
           let fromUser = like[ParseHelper.ParseLikeFromUser] as! PFUser
 >
           return fromUser
