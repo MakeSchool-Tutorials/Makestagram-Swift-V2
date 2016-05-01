@@ -105,7 +105,7 @@ In the example above we are checking whether the user stored in the _"user"_ col
 
 Once you have set up a query with all the constraints you need, you can start fetching the data:
 
-    query.findObjectsInBackgroundWithBlock {(result: [AnyObject]?, error: NSError?) -> Void in
+    query.findObjectsInBackgroundWithBlock {(result: [PFObject]?, error: NSError?) -> Void in
       // ...
     }
 
@@ -176,7 +176,7 @@ Add the following implementation of `viewDidAppear` to the `TimelineViewControll
         query.orderByDescending("createdAt")
 >
         // 7
-        query.findObjectsInBackgroundWithBlock {(result: [AnyObject]?, error: NSError?) -> Void in
+        query.findObjectsInBackgroundWithBlock {(result: [PFObject]?, error: NSError?) -> Void in
           // 8
           self.posts = result as? [Post] ?? []
           // 9
@@ -192,7 +192,7 @@ Add the following implementation of `viewDidAppear` to the `TimelineViewControll
 5. We define that the combined query should also fetch the `PFUser` associated with a post. As you might remember, we are storing a _pointer_ to a user object in the _user_ column of each post. By using the `includeKey` method we tell Parse to resolve that pointer and download all the information about the user along with the post. We will need the username later when we display posts in our timeline.
 6. We define that the results should be ordered by the _createdAt_ field. This will make posts on the timeline appear in chronological order.
 7. We kick off the network request.
-8. In the completion block we receive all posts that meet our requirements. The Parse framework hands us an array of type `[AnyObject]?`. However, we would like to store the posts in an array of type `[Post]`. In this step we check if it is possible to cast the result into a `[Post]`; if that's not possible (e.g. because the result is nil) we store an empty array (`[]`) in `self.posts`. The `??` operator is called the _nil coalescing operator_ in Swift. If the statement before this operator returns `nil`, the return value will be replaced with the value after the operator.
+8. In the completion block we receive all posts that meet our requirements. The Parse framework hands us an array of type `[PFObject]?`. However, we would like to store the posts in an array of type `[Post]`. In this step we check if it is possible to cast the result into a `[Post]`; if that's not possible (e.g. because the result is nil) we store an empty array (`[]`) in `self.posts`. The `??` operator is called the _nil coalescing operator_ in Swift. If the statement before this operator returns `nil`, the return value will be replaced with the value after the operator.
 9. Once we have stored the new posts, we refresh the `tableView`.
 
 #Displaying the Query Results
