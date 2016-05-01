@@ -35,7 +35,11 @@ Add an import statement (`import Parse`) to import the Parse SDK into the `AppDe
       func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
 >
         // Set up the Parse SDK
-        Parse.setApplicationId("AppID", clientKey: "ClientKey")
+        let configuration = ParseClientConfiguration {
+          $0.applicationId = "FirstApp"
+          $0.server = "https://bobs-parse-server.herokuapp.com/parse"
+        }
+        Parse.initializeWithConfiguration(configuration)
 >
         return true
       }
@@ -52,7 +56,11 @@ Copy the *Application ID* and the *Client Key* from this list. Then update the P
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
 >
       // Set up the Parse SDK
-      Parse.setApplicationId("sFhhR274jAgF2189FaFg222j5", clientKey: "rFG1ORTb234GyRsVFH")
+      let configuration = ParseClientConfiguration {
+        $0.applicationId = "FirstApp"
+        $0.server = "https://bobs-parse-server.herokuapp.com/parse"
+      }
+      Parse.initializeWithConfiguration(configuration)
 >
       return true
     }
@@ -85,7 +93,11 @@ Extend the `AppDelegate` to log in with our test credentials. We'll also add an 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
 >
       // Set up the Parse SDK
-      Parse.setApplicationId("U1fn3pXGMUA8SvOqKgrpTXTKcW7jAbl8eGKpIOQc", clientKey: "EDx3EhQRmXFuoxyzXoL6bV7utRy0xKAYyHZpo2Zm")
+      let configuration = ParseClientConfiguration {
+        $0.applicationId = "FirstApp"
+        $0.server = "https://bobs-parse-server.herokuapp.com/parse"
+      }
+      Parse.initializeWithConfiguration(configuration)
 >
       PFUser.logInWithUsername("test", password: "test")
 >
