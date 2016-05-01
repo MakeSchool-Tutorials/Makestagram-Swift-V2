@@ -38,7 +38,7 @@ Extend the `application(_:, didFinishLaunchingWithOptions:)` method, in the `App
       //...
 >
       let acl = PFACL()
-      acl.setPublicReadAccess(true)
+      acl.publicReadAccess = true
       PFACL.setDefaultACL(acl, withAccessForCurrentUser: true)
 >
       return true
