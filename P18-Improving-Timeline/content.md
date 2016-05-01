@@ -47,7 +47,7 @@ Modify the `timelineRequestForCurrentUser` method to look as follows:
       query.limit = range.endIndex - range.startIndex
 >
       query.findObjectsInBackgroundWithBlock(completionBlock)
->    }
+    }
 
 1. As discussed, we modify the method signature to accept a `Range` argument. That `Range` argument will define which portions of the timeline will be loaded. Ranges in Swift are defined like this: `5..10` (10 included) or 5..<10 (10 excluded).
 2. `PFQuery` provides a `skip` property. That allows us - as suspected by the name - to define how many elements that match our query shall be skipped. This is the equivalent of the `startIndex` of our `range`, so all we need to do is a simple assignment.
