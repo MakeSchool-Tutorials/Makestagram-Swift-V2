@@ -112,15 +112,19 @@ As promised, this chapter will focus on making some visual progress, so for now 
 > [action]
 Extend the callback block of `findObjectsInBackgroundWithBlock` within the `viewDidAppear` method of `TimelineViewController` as shown below:
 >
-    query.findObjectsInBackgroundWithBlock {(result: [AnyObject]?, error: NSError?) -> Void in
+    query.findObjectsInBackgroundWithBlock {(result: [PFObject]?, error: NSError?) -> Void in
       self.posts = result as? [Post] ?? []
 >
       // 1
       for post in self.posts {
-        // 2
-        let data = post.imageFile?.getData()
-        // 3
-        post.image = UIImage(data: data!, scale:1.0)
+        do {
+          // 2
+          let data = try post.imageFile?.getData()
+          // 3
+          post.image.value = UIImage(data: data!, scale:1.0)
+        } catch {
+          print("could not get image")
+        }
       }
 >
       self.tableView.reloadData()
