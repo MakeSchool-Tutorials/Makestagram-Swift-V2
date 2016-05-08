@@ -285,7 +285,7 @@ Extend the `uploadPost` method, so that it sets the `user` property of the post:
     func uploadPost() {
       if let image = image {
         let imageData = UIImageJPEGRepresentation(image, 0.8)!
-        guard let imageFile = PFFile(data: imageData!) else {return}
+        guard let imageFile = PFFile(data: imageData) else {return}
         imageFile.saveInBackgroundWithBlock(nil)
 >
         // any uploaded post should be associated with the current user
