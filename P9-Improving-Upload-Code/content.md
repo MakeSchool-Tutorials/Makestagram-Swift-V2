@@ -247,8 +247,8 @@ Change the `uploadPost` method to perform saving in the background:
     func uploadPost() {
       if let image = image {
         let imageData = UIImageJPEGRepresentation(image, 0.8)!
-        let imageFile = PFFile(data: imageData)
-        imageFile?.saveInBackgroundWithBlock(nil)
+        guard let imageFile = PFFile(data: imageData!) else {return}
+        imageFile.saveInBackgroundWithBlock(nil)
 >
         self.imageFile = imageFile
         saveInBackgroundWithBlock(nil)
@@ -285,8 +285,8 @@ Extend the `uploadPost` method, so that it sets the `user` property of the post:
     func uploadPost() {
       if let image = image {
         let imageData = UIImageJPEGRepresentation(image, 0.8)!
-        let imageFile = PFFile(data: imageData)
-        imageFile?.saveInBackgroundWithBlock(nil)
+        guard let imageFile = PFFile(data: imageData!) else {return}
+        imageFile.saveInBackgroundWithBlock(nil)
 >
         // any uploaded post should be associated with the current user
         user = PFUser.currentUser()
