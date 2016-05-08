@@ -99,7 +99,11 @@ Extend the `AppDelegate` to log in with our test credentials. We'll also add an 
       }
       Parse.initializeWithConfiguration(configuration)
 >
-      PFUser.logInWithUsername("test", password: "test")
+      do {
+        try PFUser.logInWithUsername("test", password: "test")
+      } catch {
+        print("Unable to log in")
+      }
 >
       if let currentUser = PFUser.currentUser() {
         print("\(currentUser.username!) logged in successfully")

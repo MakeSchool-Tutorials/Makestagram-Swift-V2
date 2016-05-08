@@ -52,11 +52,21 @@ Now, here's one possible solution for the callback:
       if let image = image {
         let imageData = UIImageJPEGRepresentation(image, 0.8)!
         let imageFile = PFFile(data: imageData)
-        try! imageFile!.save()
+        guard imageFile!.save() else {
+          // you should let the user know an error occurred
+          // but for now we'll just print
+          print("unable to save image")
+          return
+        }
 >
         let post = PFObject(className: "Post")
         post["imageFile"] = imageFile
-        try! post.save()
+        guard post.save() else {
+          // you should let the user know an error occurred
+          // but for now we'll just print
+          print("unable to save post")
+          return
+        }
       }
     })
 

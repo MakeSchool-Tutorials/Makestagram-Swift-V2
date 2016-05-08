@@ -20,11 +20,24 @@ As you have seen, we can store information in Parse without using custom classes
 
     let imageData = UIImageJPEGRepresentation(image, 0.8)!
     let imageFile = PFFile(data: imageData)
-    imageFile.save()
+    guard imageFile!.save() else {
+      // you should let the user know an error occurred
+      // but for now we'll just print
+      print("unable to save image")
+      return
+    }
 
     let post = PFObject(className: "Post")
     post["imageFile"] = imageFile
-    post.save()
+    let post = PFObject(className: "Post")
+    post["imageFile"] = imageFile
+    guard post.save() else {
+      // you should let the user know an error occurred
+      // but for now we'll just print
+      print("unable to save post")
+      return
+    }
+
 
 We can simply use the `PFObject` class and specify a `className`. This way however, we don't have a good place to store the image uploading code. And if we need to modify many more of the post's properties, the code will become difficult to read.
 
@@ -130,10 +143,23 @@ Add the following method to the `Post` class:
         // 1
         let imageData = UIImageJPEGRepresentation(image, 0.8)!
         let imageFile = PFFile(data: imageData)
-        try! imageFile!.save()
+        guard imageFile!.save() else {
+          // you should let the user know an error occurred
+          // but for now we'll just print
+          print("unable to save image")
+          return
+        }
+>
         // 2
         self.imageFile = imageFile
-        try! save()
+        let post = PFObject(className: "Post")
+        post["imageFile"] = imageFile
+        guard post.save() else {
+          // you should let the user know an error occurred
+          // but for now we'll just print
+          print("unable to save post")
+          return
+        }
       }
     }
 
