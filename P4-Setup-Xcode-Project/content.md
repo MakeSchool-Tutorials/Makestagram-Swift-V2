@@ -73,26 +73,28 @@ Now we are ready to add our dependencies to this file.
 > [action]
 > Update your _Podfile_ so that it looks like this. Note that we uncommented the line _use_frameworks!_ since we are using swift:
 >
-> # Uncomment this line to define a global platform for your project
-platform :ios, '9.0'
-> # Uncomment this line if you're using Swift
-use_frameworks!
+  # Uncomment this line to define a global platform for your project
+  platform :ios, '9.0'
+  # Uncomment this line if you're using Swift
+  use_frameworks!
 >
-target 'Makestagram' do
-  pod 'Bond', '4.0.0'
-  pod "ConvenienceKit"
-  pod 'Parse'
-  pod 'ParseFacebookUtilsV4'
-  pod 'ParseUI'
-end
+  target 'Makestagram' do
+    pod 'Bond', '4.0.0'
+    pod "ConvenienceKit"
+    pod 'Parse'
+    pod 'ParseFacebookUtilsV4'
+    pod 'ParseUI'
+  end
 >
-target 'MakestagramTests' do
+  target 'MakestagramTests' do
 >
-end
+  end
 >
 > Then, return to the command line and run:
 >
     pod install
+>
+
 
 Now your dependencies will be download and installed.
 
