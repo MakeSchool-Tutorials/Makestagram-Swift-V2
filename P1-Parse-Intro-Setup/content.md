@@ -23,19 +23,19 @@ Throughout this tutorial you will get to know Parse in detail. Our very first st
 
 #Setting up a Parse Account
 
-First, sign up for an account.
+Parse has open sourced their platform and we have a separate tutorial for setting up your own Parse server and Parse dashboard.
+
+Once you have gone through that tutorial you have a parse server setup, and you should be able to log into your dashboard. It should look like this:
+
+
+
+Also you should note that your parse server, and dashboard will sleep when they are not being used. This is because they are being hosted for free on Heroku. You will notice this as a first action will sometimes take upwards of 2 seconds. Subsequent actions will seem much snappier in comparison.  Once you are ready for real usage, you can switch to different servers, or paid service which will allow you to scale.
+
+
 
 > [action]
-Go to [Parse.com](http://parse.com). Enter your email address, choose a password, and name your app *Makestagram*.
-![image](signup_parse.png)
-
-
-Now you have created your first Parse app!
-
-On the next screen you will see a bunch of services that Parse provides. We will only be using the *Core* product which allows us to create a data model for our application.
-
-> [action]
-Select *Core* in the top bar to open the Parse Data Browser:
-![image](parse_core.png)
+Log in to your dashboard and select the first instance of your app that says `AppName` but not `AppName Production`
+![image](parse_dashboard.png)
+![image](parse_browser.png)
 
 This is the place where we can see and edit the data model for our application. Before we dive into the details of how to create new classes, we should discuss what the data model for *Makestagram* should look like.
