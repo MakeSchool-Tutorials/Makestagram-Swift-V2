@@ -51,20 +51,20 @@ Now we can create a _Podfile_ that will allow us to declare dependencies for our
     pod init
 
 Now a _Podfile_ with some skeleton content will be created. Open the _Podfile_ in your favorite text editor. It should look like this:
-
+>
     # Uncomment this line to define a global platform for your project
     platform :ios, '9.0'
     # Uncomment this line if you're using Swift
     # use_frameworks!
-
+>
     target 'Makestagram' do
-
+>
     end
-
+>
     target 'MakestagramTests' do
-
+>
     end
-
+>
 
 #Installing Our Dependencies
 
