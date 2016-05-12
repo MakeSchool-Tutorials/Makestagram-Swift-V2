@@ -5,7 +5,7 @@ slug: connect-parse-backend
 
 Since all the features of *Makestagram* rely on the Parse framework, we will set it up as a very first step.
 
-The Parse framework requires us to provide the *ID* of our Parse App as soon as our iPhone app starts. That way our iPhone app and our backend can establish a connection.
+The Parse framework requires us to provide the *ID* of our Parse App as soon as our iPhone app starts. That way our iPhone app and our backend can establish a connection. Since we are hosting our own Parse, we will also have to put in the URL where that server lives.
 
 To set up the Parse SDK we will first need to answer the following question: *What is the right place to perform code upon app launch?*
 
@@ -19,10 +19,10 @@ Every iOS project gets created with a class called `AppDelegate`. This class has
       return true
     }
 
-This method is called as soon as our app starts - this is where we need to add the code to configure the Parse SDK. The SDK can be configured with one simple method call.
+This method is called as soon as our app starts - this is where we need to add the code to configure the Parse SDK.
 
 > [action]
-Add an import statement (`import Parse`) to import the Parse SDK into the `AppDelegate`. Then add a method call to `Parse.setApplicationID` into the `application(application:didFinishLaunchingWithOptions:launchOptions:)` method. The result should look like this:
+Add an import statement (`import Parse`) to import the Parse SDK into the `AppDelegate`. Then we are going to configure and initialize Parse into the `application(application:didFinishLaunchingWithOptions:launchOptions:)` method. The result should look like this:
 >
     import UIKit
     import Parse
@@ -46,12 +46,11 @@ Add an import statement (`import Parse`) to import the Parse SDK into the `AppDe
 >
       ...
 
-Next, we need to replace the current placeholders for the *AppID* and the *ClientKey* with the correct values for our Parse application. We can grab these keys from our dashboard on parse.com.
+Next, we need to replace the current placeholders for the *APP_ID* and the *SERVER_URL* with the correct values for our Parse server that we setup.
 
 > [action]
-Open the browser and pull up your Parse app (if you've closed the tab you can find your Parse App [here](https://www.parse.com/apps/)). Then select the *Settings* tab on the top and the *Keys* tab on the left. You should see the following list of keys:
-![image](keys.png)
-Copy the *Application ID* and the *Client Key* from this list. Then update the Parse setup method to include them:
+![](parse_setup.png)
+Copy the *APP_ID* and the *SERVER_URL* from setting up your parse server. Then update the Parse setup method to include them:
 >
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
 >
@@ -65,9 +64,19 @@ Copy the *Application ID* and the *Client Key* from this list. Then update the P
       return true
     }
 
-**Make sure to include your keys from the dashboard instead of the example ones above :)**
+**Make sure to include the values from your parse server setup :)**
 
 Now we should be ready to work with Parse SDK! In a moment we will see if you've set everything up correctly.
+
+But before we do, lets take a quick look at that code again. Notice anything weird with it? `$0`?? What does that mean? Well, this is actually shorthand for this
+>
+let configuration = ParseClientConfiguration { (configuration) -> Void in
+  configuration.applicationId = "parseAppOne2"
+  configuration.server = "https://parsepass1.herokuapp.com/parse"
+}
+
+In this case, Swift lets you avoid defining the closure and just jump into it with `$0` representing the first argument it would have taken.
+
 
 #Adding a Fake Login
 
