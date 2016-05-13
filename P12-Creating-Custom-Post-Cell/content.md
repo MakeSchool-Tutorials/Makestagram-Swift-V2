@@ -140,6 +140,12 @@ Now you can run the app again. And for the first time you should see our photos 
 
 That's awesome! This app is very slowly starting to look like a real photo sharing app!
 
+#Error Handling
+
+When your app makes it into the App Store, and into the hands of your users, you lose a lot of the control over it. The best example of that, is how reliable the internet of your users will be. Maybe they are in a country that blocks certain servers or services. Apps that crash get bad reviews, and might not even make it past the review process employed by Apple to get into the store in the first place.
+
+Luckily for you, with Swift, Xcode will not allow you to do many unsafe things without _force_. But _force_, is usually not a _best practice_. `do/catch` however, is a _best practice_.  What you do with the error handling will be up to you, and will dictate the user experience for everyone who encounters the unexpected in your app. But, by using this pattern, you will avoid a crash, which is of the utmost importance on mobile app platforms. To many clients/users/employers, crashes are unacceptable. There are tools to help catch and report crashes so you can snuff them out, but those should be a safety net, not the main thing you rely on.
+
 #Conclusion
 
 In this chapter you have learned how to set up a custom table view cell. Almost all iOS apps use table views in combination with custom cells, so this knowledge will be very useful for your own app! You have also learned that `PFFile`s are stored as references in other `PFObject`s and are not automatically downloaded. For now we have implemented a primitive approach of downloading the photos for each post - after all, the focus of this chapter was to make some visual progress!

@@ -129,6 +129,8 @@ After we performed the login we check if it was successful. The `PFUser.currentU
 
 Depending on the result we print a success or failure message to the console using the `print` function.
 
+Also, note the `do/catch` error handling. Since this is placeholder code, we will leave it as is, but we will touch on the subject later in the tutorial.
+
 > [action]
 Now it's time to run the app! You should see the following console output (if the console does not show up, use the following shortcut: ⌘+⇧+C):
 ![image](console_output.png)
