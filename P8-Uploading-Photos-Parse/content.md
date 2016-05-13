@@ -51,28 +51,20 @@ Now, here's one possible solution for the callback:
     photoTakingHelper = PhotoTakingHelper(viewController: self.tabBarController!, callback: { (image: UIImage?) in
       if let image = image {
         let imageData = UIImageJPEGRepresentation(image, 0.8)!
-        let imageFile = PFFile(data: imageData)
-        guard imageFile!.save() else {
-          // you should let the user know an error occurred
-          // but for now we'll just print
-          print("unable to save image")
-          return
-        }
+        let imageFile = PFFile(data: imageData)!
+        imageFile.saveInBackground()
 >
         let post = PFObject(className: "Post")
         post["imageFile"] = imageFile
-        guard post.save() else {
-          // you should let the user know an error occurred
-          // but for now we'll just print
-          print("unable to save post")
-          return
-        }
+        post.saveInBackground()
       }
     })
 
-There shouldn't be too many surprises in these lines. The most interesting one is the very first one. We turn the `UIImage` into an `NSData` instance because the `PFFile` class needs an `NSData` argument for its initializer.
+There shouldn't be too many surprises in these lines. The most interesting one is the very first one. We turn the `UIImage` into an `NSData` instance because the `PFFile` class needs an `NSData` argument for its initializer. But what is that `!` doing at the end?!  It takes the optional returned, and _force_ unwraps it. But, keep in mind that by using _force_, the application will crash if it fails. It will raise an unhandled exception and boom! your app has crashed. The documentation for Swift explains that this is only meant to be used if a failure to unwrap is considered to be a total failure.
 
-Then we create and `save` the `PFFile`.
+Also, what does the `0.8` represent? `UIImageJPEGRepresentation` takes a mandatory _float_ argument from 0.0 to 1.0 of JPEG image quality. The higher the number, the higher the quality but the larger the size as well. A lower number represents lower quality but a smaller file size as well.
+
+Next we create and `save` the `PFFile`.
 
 In the next step we create a `PFObject` of type post. We assign the `"imageFile"` to this post and then save it as well.
 
@@ -84,17 +76,11 @@ Now it's time to test our solution! Run the app and select an image. You should 
   <source src="https://s3.amazonaws.com/mgwu-misc/SA2015/PhotoUpload_Working_small.mov" type="video/mp4">
 </video>
 
-When following these steps you will notice two things:
-
-1. There is a delay of a few seconds after you pick an image
-2. You will see the following message in the console log:
-   > Warning: A long-running operation is being executed on the main thread.
-
-We will discuss this issue and fix it throughout this tutorial! For now let's first see if the upload actually worked as expected.
+Now let's first see if the upload actually worked as expected.
 
 The best way to do that is to use the Parse data browser. It will give us a nice overview of all the objects that have been created on our server.
 
-Open your browser and open your parse.com app (ideally you should keep it open throughout the rest of this tutorial). Then select the _Post_ class in the left bar of the data browser. You should see one entry for this class:
+Open your browser and open your parse dashboard (ideally you should keep it open throughout the rest of this tutorial). Then select the _Post_ class in the left bar of the data browser. You should see one entry for this class:
 
 ![image](uploaded_post.png)
 
@@ -106,7 +92,7 @@ To be 100% sure that everything worked correctly, you can double-click onto the 
 
 However, there are many things to improve here:
 
-1. We need to resolve the warnings in the console.
+1. We need to handle the result of saving in the background.
 2. We need to store more information along with the `Post` that we're creating. Right now we are only storing the image file, but we also need to store the `user` to which the post belongs.
 
 In the next step we will move from this very simple upload code to a more mature solution.
