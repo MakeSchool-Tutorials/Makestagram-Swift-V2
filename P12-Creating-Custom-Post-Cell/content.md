@@ -121,7 +121,7 @@ Extend the callback block of `findObjectsInBackgroundWithBlock` within the `view
           // 2
           let data = try post.imageFile?.getData()
           // 3
-          post.image.value = UIImage(data: data!, scale:1.0)
+          post.image = UIImage(data: data!, scale:1.0)
         } catch {
           print("could not get image")
         }
