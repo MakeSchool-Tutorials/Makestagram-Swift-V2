@@ -10,17 +10,7 @@ use Auto Layout with Interface Builder, you should check out our lecture series:
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PLZ_SI6zSFXvD8fi9dan4UsgDdr3-OXyjV" frameborder="0" allowfullscreen></iframe>
 
-## Adding Additional Resources
-
-This step is pretty simple: we're going to add some more resources to our asset catalog. You've already downloaded the art pack for this tutorial earlier on, in case you no longer know where you've stored it you can get it again [here](https://s3.amazonaws.com/mgwu-misc/SA2015/Makestagram_Art.zip)
-
-> [action]
-Add new image sets for each of these resources (if you no longer know how this works, go back to the step where we set up the tab bar). The result should look like this (note that you don't need to set up _camera_ and _AppIcon_):
->
-![image](add_all_resources.png)
-
-Make sure you have added all of the resources with the correct names! Now we have some hearts and buttons that can we use to turn our table view cell into a nice looking interface.
-
+## The Design
 When we are entirely done, we want the table view cell to look like this:
 
 ![image](finished_cell.png)
@@ -137,7 +127,7 @@ Most of them are self-explanatory. The `Highlighted` state is activated as soon 
 Let's set up the image for the selected state real quick.
 
 > [action]
-Set up the _Heart-selected_ image for the like button:
+Set up the _heart_selected_ image for the like button:
 ![image](selected_state.png)
 
 Now our like button is complete! But there's a lot more UI to be built. Feel free to grab your favorite hot beverage, but promise to come back!
