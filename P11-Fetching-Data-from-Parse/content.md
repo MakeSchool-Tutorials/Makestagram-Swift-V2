@@ -239,7 +239,7 @@ After a short moment the Table View should show as many posts as you can see in 
 
 ![image](posts_working.png)
 
-If you don't see any posts, try uploading a few new ones! Use the Parse data browser to see how many post entries you have stored.
+If you don't see any posts (because we just deleted them all), try uploading a few new ones! Use the Parse data browser to see how many post entries you have stored.
 
 #Conclusion
 
