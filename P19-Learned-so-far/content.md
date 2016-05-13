@@ -29,7 +29,7 @@ You learned how to take the data model you designed and create the respective cl
 
 ##Connecting to Parse
 
-In this step you connected your iOS app to the Parse backend. You also set up a simple login mechanism.
+In this step you connected your iOS app to your Parse server backend. You also set up a simple login mechanism.
 
 ##Setting up the App Structure
 
@@ -41,7 +41,7 @@ You implemented a fairly complex feature that involved communication between dif
 
 ##Implementing Photo Upload
 
-In this chapter you wrote your first changes to the Parse backend! You also learned how to verify that your code works by using the Parse data browser.
+In this chapter you wrote your first changes to the Parse backend! You also learned how to verify that your code works by using the Parse dashboard and data browser.
 
 ##Improving the Upload Code
 
@@ -84,6 +84,9 @@ This step essentially taught you how to build interactive features that trigger 
 ##Pull-To-Refresh and Endless Scrolling
 
 You learned how to be more thoughtful of your user's resources by querying the relevant subset of information to show in your app. You learned how to use the `TimelineComponent` to add pull-to-refresh and endless scrolling to your timeline.
+
+## Best Practices
+You learned throughout the tutorial how to employ _best practices_ at many things, especially in regards to handling expected, and unexpected errors.
 
 #Where to go from here?
 
