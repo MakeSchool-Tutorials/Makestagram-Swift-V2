@@ -59,6 +59,9 @@ Thus far in the **Makestagram** tutorial, we have created multiple posts. Most o
 > [action]
 Use the Parse data browser to delete all rows of the `Post` class:
 >
+1. Check all the check boxes for each row
+1. Click `Edit`, select `Delete these rows`, and confirm
+>
 ![image](delete_posts.png)
 
 #Conclusion
