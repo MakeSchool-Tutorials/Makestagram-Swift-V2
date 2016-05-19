@@ -309,12 +309,12 @@ Add the following method to the `Post` class:
       }
 >
       // 2
-      ParseHelper.likesForPost(self, completionBlock: { (var likes: [PFObject]?, error: NSError?) -> Void in
+      ParseHelper.likesForPost(self, completionBlock: { (likes: [PFObject]?, error: NSError?) -> Void in
         // 3
-        likes = likes?.filter { like in like[ParseHelper.ParseLikeFromUser] != nil }
+        let validLikes = likes?.filter { like in like[ParseHelper.ParseLikeFromUser] != nil }
 >
         // 4
-        self.likes.value = likes?.map { like in
+        self.likes.value = validLikes?.map { like in
           let fromUser = like[ParseHelper.ParseLikeFromUser] as! PFUser
 >
           return fromUser
