@@ -10,7 +10,7 @@ Instead of going through these steps now, we will start with a template project 
 But there is a catch! In order to save all this time, we are using a tool called _CocoaPods_. This will take care of all the third party libraries we rely on. As for the system libraries, we have already included them.
 
 > [action]
-Get started by downloading our [Starter Project](https://github.com/MakeSchool/Makestagram-Swift2/archive/xcode7_starter_project.zip).
+Get started by downloading our [Starter Project](https://github.com/MakeSchool-Tutorials/Makestagram-Swift-V2-Starter/archive/master.zip).
 Once the download completes, unzip the project. Copy the project to the folder where you typically store your coding projects.
 
 
