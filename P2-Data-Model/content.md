@@ -3,7 +3,7 @@ title: "Designing the Data Model"
 slug: data-model
 ---
 
-To design a data model we need to know which features our app will have. The goal of this tutorial is to build a photo sharing app. Users shall be able to share photos, follow users, and interact with other users through likes.
+In order to design a data model, we first need to know what features our app will have. The goal of this tutorial is to build a photo sharing app. Users shall be able to share photos, follow users, and interact with other users through likes.
 
 This is the detailed list of features our app will have:
 
@@ -17,15 +17,15 @@ This is the detailed list of features our app will have:
 - Delete photos you posted
 - Flag photos other users have posted
 
-You know most of the features from popular social network apps. You might wonder why include *flagging* content in this simple photo sharing app. We include it because it's an important feature to get your app into Apple's App Store. Apple requires apps with user created content to have a *flag* feature - this way users can report inappropriate content. Since you will likely need this feature in your original app, we have included it as part of the tutorial.
+You are probably familiar with most of these features from popular social network apps. You might wonder why we included *flagging* content in this simple photo sharing app. It turns out that it's an important feature to get your app into Apple's App Store. Apple requires apps with user created content to have a *flag* feature - this way users can report inappropriate content. Since you will likely need this feature in your own apps, we have included it as part of the tutorial.
 
 #Finding the Classes in Our App
 
-Now that we know which features our app will have, how can we build a data model?
+Now that we know about the features our app will have, how can we build a data model?
 
-Typically the first step in defining a data model is finding different classes that are involved in our features.
+Typically the first step in defining a data model is thinking about the different classes that are involved in each of the features.
 
-**Looking at the feature list above, which classes can you identify?**
+**Looking at the feature list above, what classes can you identify?**
 
 > [solution]
 Looking at the features above we can identify at least the three following classes:
@@ -36,21 +36,21 @@ Looking at the features above we can identify at least the three following class
 
 These three classes will definitely be part of our data model!
 
-#Modelling Object Relationships
+#Modeling Object Relationships
 
-In addition to finding classes we also need to think about the possible interactions with them. Some of the interactions need to be considered when defining our data model.
+In addition to thinking about the classes, we also need to think about the possible interactions between them. Some of these interactions need to be considered when defining our data model.
 
 Deleting a post is easy, we can simply delete the associated post object, so we don't need to integrate this into our model.
 
-Some interactions are more complex, such as liking a post or following a user.
+However, some interactions are more complex, such as liking a post or following a user.
 
-**How could we store which user has liked which image? How can we store which users another user is following?**
+**How can we store which user has liked which image? How can we store which users another user is following?**
 
 Your first reaction is very likely similar to this: we can store the likes as part of the post object and the followers as part of the user object!
 
 However, there is a non-obvious issue with this approach.
 
-Imagine the following scenario: we are building the timeline feature for our app. We want to find all the users that the current user is following, in order to show their latest post. How can we find these users? If we store the information about *followers* as part of the user object, we need to search through **all** users of the app and see if we are part of the follower list for each of them.
+Imagine the following scenario: we are building the timeline feature for our app. We want to find all the users that you are following, in order to show their latest posts. How can we find these users? If we store the information about *followers* as part of the user object, we need to search through **all** users of the app and see if you are part of the follower list for each of them.
 
 If your app has a lot of users, such a request will take a very long time!
 
@@ -87,6 +87,6 @@ Works just as *FlaggedContent*; stores a reference to the *post* that is liked a
 - **Follow**
 Stores a following relationship between two users. The *toUser* field stores the user being followed, the *fromUser* user field stores the following user.
 
-Now you should have a good understanding of all the classes we need. You will be able to use our approach to identify the classes for your original app as well. First, take a look at the different subjects that you can identify from your features, e.g. *Users*, *Posts*, etc. Then take a look at the relationships between them.
+Now you should have a good understanding of all the classes we need. You will be able to use a similar approach to identify the classes for your own apps as well. First, take a look at the different objects that you can identify from your features, e.g. *Users*, *Posts*, etc. Then take a look at the relationships between them.
 
 With this understanding we can now move on to some action - setting up all of the classes in Parse.
