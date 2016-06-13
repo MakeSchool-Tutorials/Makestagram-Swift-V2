@@ -19,7 +19,7 @@ This is the detailed list of features our app will have:
 
 You are probably familiar with most of these features from popular social network apps. You might wonder why we included *flagging* content in this simple photo sharing app. It turns out that it's an important feature to get your app into Apple's App Store. Apple requires apps with user created content to have a *flag* feature - this way users can report inappropriate content. Since you will likely need this feature in your own apps, we have included it as part of the tutorial.
 
-#Finding the Classes in Our App
+#Defining the Classes in Our App
 
 Now that we know about the features our app will have, how can we build a data model?
 
