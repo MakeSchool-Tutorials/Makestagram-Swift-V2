@@ -14,9 +14,9 @@ In order to set up the Parse SDK, we will first need to ask ourselves the follow
 Every new iOS project is created with a class called `AppDelegate`. This class has methods that get called when the app is started, put into the background, or closed. These actions (starting, going into the background, and closing), are referred to as *lifecycle* events.  Whenever we want to respond to such events, the `AppDelegate` is the right place to add our code. If you open the *AppDelegate.swift* file, inside the *Makestagram* project, you will see the different lifecycle methods. If you are curious about the responsibilities of each of these methods, check out this Apple [documentation](https://developer.apple.com/library/ios/documentation/iPhone/Conceptual/iPhoneOSProgrammingGuide/TheAppLifeCycle/TheAppLifeCycle.html). For now, we are mainly interested in the following method:
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-      // Override point for customization after application launch.
+        // Override point for customization after application launch.
 
-      return true
+        return true
     }
 
 This method is called as soon as our app starts - this is where we need to add the code to configure the Parse SDK.
@@ -30,19 +30,19 @@ Add an import statement (`import Parse`) to import the Parse SDK into the `AppDe
     @UIApplicationMain
     class AppDelegate: UIResponder, UIApplicationDelegate {
 >
-      var window: UIWindow?
+        var window: UIWindow?
 >
-      func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+        func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
 >
-        // Set up the Parse SDK
-        let configuration = ParseClientConfiguration {
-          $0.applicationId = APP_ID
-          $0.server = SERVER_URL
+            // Set up the Parse SDK
+            let configuration = ParseClientConfiguration {
+                $0.applicationId = APP_ID
+                $0.server = SERVER_URL
+            }
+            Parse.initializeWithConfiguration(configuration)
+>
+            return true
         }
-        Parse.initializeWithConfiguration(configuration)
->
-        return true
-      }
 >
       ...
 
@@ -63,14 +63,14 @@ Copy your *APP_ID* and *SERVER_URL* into the Parse SDK setup. Make sure you make
 >
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
 >
-      // Set up the Parse SDK
-      let configuration = ParseClientConfiguration {
-        $0.applicationId = "makestagram"
-        $0.server = "https://makestagram-parse-abc.herokuapp.com/parse"
-      }
-      Parse.initializeWithConfiguration(configuration)
+        // Set up the Parse SDK
+        let configuration = ParseClientConfiguration {
+            $0.applicationId = "makestagram"
+            $0.server = "https://makestagram-parse-abc.herokuapp.com/parse"
+        }
+        Parse.initializeWithConfiguration(configuration)
 >
-      return true
+        return true
     }
 
 **Make sure you include your values! Not these example ones.**
