@@ -3,11 +3,11 @@ title: "Getting Started"
 slug: getting-started
 ---
 
-Throughout this tutorial you will build a photo sharing app that is similar to the popular app  [Instagram](https://instagram.com/). After finishing the *Make School Notes* tutorial you should have a good understanding of the basics of iOS development.
+During this tutorial you will build a photo sharing app that is similar to the popular app [Instagram](https://instagram.com/). After finishing the *Make School Notes* tutorial you should have a good understanding of the basics of iOS development.
 
 In this tutorial we will touch many advanced iOS development topics, including how to use [Parse](https://parse.com) to build a backend for your app.
 
-Here are the most important things you will learn throughout this tutorial:
+Here are the most important things you will learn:
 
 - How to define a data model using Parse
 - How to implement a login using Parse and Facebook
@@ -27,8 +27,8 @@ Let's get started by taking a look at how Parse works and defining the data mode
 
 #Feedback
 
-If you have feedback on this tutorial or find any mistakes, please open issues on the [GitHub Repository](https://github.com/MakeSchool-Tutorials/Makestagram-Swift) - we'd love to hear from you!
+If you have feedback on this tutorial or find any mistakes, please open issues on the [GitHub Repository](https://github.com/MakeSchool-Tutorials/Makestagram-Swift-V2) - we'd love to hear from you!
 
 #Solution Code
 
-If at any point you get stuck, try to debug it yourself!  Learning to debug is a very important part of being a good programmer. However, if you really can't move forward, you can download the final solution [here](https://github.com/MakeSchool/Makestagram-Swift2/archive/xcode7_finished_project.zip). 
+If at any point you get stuck, try to debug it yourself!  Learning to debug is a very important part of being a good programmer. However, if you really can't move forward, you can download the final solution [here](https://github.com/MakeSchool-Tutorials/Makestagram-Swift-V2-Solution/archive/part2-solution.zip). 
