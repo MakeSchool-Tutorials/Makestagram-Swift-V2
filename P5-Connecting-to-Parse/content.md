@@ -11,7 +11,7 @@ In order to set up the Parse SDK, we will first need to ask ourselves the follow
 
 #Configuring the SDK on App Launch
 
-Every new iOS project is created with a class called `AppDelegate`. This class has methods that get called when the app is started, put into the background, or closed. These actions (starting, going into the background, and closing), are referred to as *lifecycle* events.  Whenever we want to respond to such events, the `AppDelegate` is the right place to add our code. If you open the *AppDelegate.swift* file, inside the *Makestagram* project, you will see the different lifecycle methods. If you are curious about the responsibilities of each of these methods, checkout this Apple [documentation](https://developer.apple.com/library/ios/documentation/iPhone/Conceptual/iPhoneOSProgrammingGuide/TheAppLifeCycle/TheAppLifeCycle.html). For now, we are mainly interested in the following method:
+Every new iOS project is created with a class called `AppDelegate`. This class has methods that get called when the app is started, put into the background, or closed. These actions (starting, going into the background, and closing), are referred to as *lifecycle* events.  Whenever we want to respond to such events, the `AppDelegate` is the right place to add our code. If you open the *AppDelegate.swift* file, inside the *Makestagram* project, you will see the different lifecycle methods. If you are curious about the responsibilities of each of these methods, check out this Apple [documentation](https://developer.apple.com/library/ios/documentation/iPhone/Conceptual/iPhoneOSProgrammingGuide/TheAppLifeCycle/TheAppLifeCycle.html). For now, we are mainly interested in the following method:
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
       // Override point for customization after application launch.
@@ -80,8 +80,8 @@ Now we should be ready to work with the Parse SDK! In a moment we will see if yo
 But before we do, lets take a quick look at that code again. Notice anything weird with it? `$0`? What does that mean? Well, that is actually shorthand for this:
 >
 	let configuration = ParseClientConfiguration { (configuration) -> Void in
-	  configuration.applicationId = "makestagram"
-	  configuration.server = "https://makestagram-parse-abc.herokuapp.com/parse"
+	    configuration.applicationId = "makestagram"
+	    configuration.server = "https://makestagram-parse-abc.herokuapp.com/parse"
 	}
 
 In this case, Swift lets you avoid defining the closure and just jump into it with `$0` representing the first argument it would have taken.
