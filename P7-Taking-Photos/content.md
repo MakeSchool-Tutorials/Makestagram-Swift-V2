@@ -3,11 +3,11 @@ title: "Taking Photos"
 slug: taking-photos
 ---
 
-It's time to implement our very first feature: uploading photos to Parse! In **Makestagram**, we want to allow the users to upload or take a photo as soon as they tap the camera button in the middle of the tab bar.
+It's time to implement our very first feature: uploading photos to Parse! In **Makestagram**, we want to allow the users to take a photo or select one from their camera roll as soon as they tap the camera button in the middle of the tab bar.
 
-Typically a tab bar view controller only allows a user to switch between different view controllers; however, we don't want to switch to a view controller when the button is tapped, instead we want to show an action dialog that lets the user take or select a picture:
+Typically a tab bar view controller only allows a user to switch between different view controllers; however, we don't want to switch to a view controller when the button is tapped, instead we want to show an action dialog that lets the user take or select a picture, like this:
 
-![image](taking_photo.png)
+![Where do you want to get your picture from? action dialog](taking_photo.png)
 
 Unfortunately, using a tab bar view controller, we cannot *easily* perform an arbitrary method when one of the tab bar items is selected; however, there's a **workaround**.
 
@@ -39,7 +39,7 @@ That means we can use the `TimelineViewController` as the delegate for the `UITa
 Implementing our solution involves two steps:
 
 1. Set the `TimelineViewController` as the delegate of `UITabBarViewController`
-2. Implement the `tabBarController(_ , shouldSelectViewController:)` delegate method
+2. Implement the `tabBarController(_:shouldSelectViewController:)` delegate method
 
 > [action]
 Replace the entire source code in `TimelineViewController.swift` with the following one:
@@ -48,27 +48,25 @@ Replace the entire source code in `TimelineViewController.swift` with the follow
 >
     class TimelineViewController: UIViewController {
 >
-      override func viewDidLoad() {
-        super.viewDidLoad()
+        override func viewDidLoad() {
+          super.viewDidLoad()
 >
-        self.tabBarController?.delegate = self
-      }
->
+          self.tabBarController?.delegate = self
+        }
     }
 >
     // MARK: Tab Bar Delegate
 >
     extension TimelineViewController: UITabBarControllerDelegate {
 >
-      func tabBarController(tabBarController: UITabBarController, shouldSelectViewController viewController: UIViewController) -> Bool {
-        if (viewController is PhotoViewController) {
-          print("Take Photo")
-          return false
-        } else {
-          return true
+        func tabBarController(tabBarController: UITabBarController, shouldSelectViewController viewController: UIViewController) -> Bool {
+            if (viewController is PhotoViewController) {
+                print("Take Photo")
+                return false
+            } else {
+                return true
+            }
         }
-      }
->
     }
 
 What are we doing here? In `viewDidLoad` we are setting the `TimelineViewController` to be the delegate of the `tabBarController`. Every `UIViewController` (which includes all subclasses) in iOS has the `tabBarController?` property; if the view controller is presented from a `UITabBarViewController` (as is the case in **Makestagram**), this property will store a reference to it.
@@ -100,7 +98,7 @@ Regarding features, as **Makestagram** is a photo sharing app, users should be a
 
 Regarding structure, let's discuss the process step-by-step:
 
-![image](photo_taking_structure.png)
+![Photo sharing flow diagram](photo_taking_structure.png)
 
 1. The user taps the camera button, which triggers an event in the `TimelineViewController`. (Currently, we are logging "Take Photo" to the console during this step.)
 2. The `TimelineViewController` notifies a helper class, called `PhotoTakingHelper`, that the camera button was pressed. (We use the `PhotoTakingHelper` to handle all of our photo related features to help make our code more modular and easier to read.)
@@ -119,8 +117,8 @@ Before we jump into implementing our photo code, let's create a new folder for o
 
 > [action]
 Open the folder that contains your Xcode project in Finder: and create a new folder called *PhotoTaking*. It should be on the same level as the *ViewController* folder:
-![image](show_in_finder.png)
-![image](photo_taking_folder.png)
+![Right click Makestagram group, show in finder](show_in_finder.png)
+![Create PhotoTaking folder](photo_taking_folder.png)
 Then add this new folder to your Xcode project:
 <video width="100%" controls>
   <source src="https://s3.amazonaws.com/mgwu-misc/SA2015/AddPhotoFolder_small.mov" type="video/mp4">
@@ -132,7 +130,7 @@ We can now add our new source code file to the *PhotoTaking* group.
 > [action]
 >
 1. Create a new Cocoa Touch class within the *PhotoTaking* group
-2. Name this class *PhotoTakingHelper* and make it a subclass of *NSObject* (we will discuss why this is necessary later on): ![image](photo_taking_helper_class.png)
+2. Name this class *PhotoTakingHelper* and make it a subclass of *NSObject* (we will discuss why this is necessary later on): ![New file creation dialog](photo_taking_helper_class.png)
 
 Now that we have a plan and a place to put our code, let's start implementing this feature!
 
@@ -144,9 +142,9 @@ Our `PhotoTakingHelper` will have three main responsibilities:
 2. Depending on the user's selection, presenting the camera or photo library.
 2. Returning the image that the user has taken or selected.
 
-The first and second responsibilities of the `PhotoTakingHelper` require it to present a `UIAlertController` and 'UIImagePickerController', respectively. However, in iOS, only view controllers can present other view controllers, and the `PhotoTakingHelper` is a simple `NSObject`, not a `UIViewController`. To enable view controller presentation inside the `PhotoTakingHelper` class, we will implement the initializer of the `PhotoTakingHelper` to require a reference to a `UIViewController`.
+The first and second responsibilities of the `PhotoTakingHelper` require it to present a `UIAlertController` and `UIImagePickerController`, respectively. However, in iOS, only view controllers can present other view controllers, and the `PhotoTakingHelper` is a simple `NSObject`, not a `UIViewController`. To enable view controller presentation inside the `PhotoTakingHelper` class, we will implement the initializer of the `PhotoTakingHelper` to require a reference to a `UIViewController`.
 
-To implement the third responsibility of the `PhotoTakingHelper` we will need to have a way to communicate with the `TimelineViewController` - as shown in Step 6 of our outline above. For this we could use the concept of delegation (on the previous page we used delegation to receive information from the `UITabBarController`). A more convenient solution for this specific case is using a *Callback*. A *Callback* is basically a reference to a function. When initializing the `PhotoTakingHelper` inside of the *TimelineViewController* we will provide it with a callback function. As soon as the `PhotoTakingHelper` has selected an image, it will call that *Callback* function and provide the selected image to the *TimelineViewController*.
+To implement the third responsibility of the `PhotoTakingHelper` we will need to have a way to communicate with the `TimelineViewController` - as shown in Step 6 of our outline above. For this we could use the concept of delegation (on the previous page we used delegation to receive information from the `UITabBarController`). A more convenient solution for this specific case is using a *callback*. A *callback* is basically a reference to a function. When initializing the `PhotoTakingHelper` inside of the *TimelineViewController* we will provide it with a callback function. As soon as the `PhotoTakingHelper` has selected an image, it will call that *callback* function and provide the selected image to the *TimelineViewController*.
 
 Let's get started with building the `PhotoTakingHelper`!
 
@@ -163,23 +161,23 @@ Replace the entire content of `PhotoTakingHelper.swift` with the following code:
 >
     class PhotoTakingHelper : NSObject {
 >
-      // View controller on which AlertViewController and UIImagePickerController are presented
-      weak var viewController: UIViewController!
-      var callback: PhotoTakingHelperCallback
-      var imagePickerController: UIImagePickerController?
+        // View controller on which AlertViewController and UIImagePickerController are presented
+        weak var viewController: UIViewController!
+        var callback: PhotoTakingHelperCallback
+        var imagePickerController: UIImagePickerController?
 >
-      init(viewController: UIViewController, callback: PhotoTakingHelperCallback) {
-        self.viewController = viewController
-        self.callback = callback
+        init(viewController: UIViewController, callback: PhotoTakingHelperCallback) {
+            self.viewController = viewController
+            self.callback = callback
 >
-        super.init()
+            super.init()
 >
-        showPhotoSourceSelection()
-      }
+            showPhotoSourceSelection()
+        }
 >
-      func showPhotoSourceSelection() {
+         func showPhotoSourceSelection() {
 >
-      }
+         }
 >
     }
 
@@ -207,13 +205,13 @@ Let's add the code for the popup to `PhotoTakingHelper`:
 Replace the empty implementation of `showPhotoSourceSelection()` with the following one:
 >
       func showPhotoSourceSelection() {
-        // Allow user to choose between photo library and camera
-        let alertController = UIAlertController(title: nil, message: "Where do you want to get your picture from?", preferredStyle: .ActionSheet)
+          // Allow user to choose between photo library and camera
+          let alertController = UIAlertController(title: nil, message: "Where do you want to get your picture from?", preferredStyle: .ActionSheet)
 >
-        let cancelAction = UIAlertAction(title: "Cancel", style: .Cancel, handler: nil)
-        alertController.addAction(cancelAction)
+          let cancelAction = UIAlertAction(title: "Cancel", style: .Cancel, handler: nil)
+          alertController.addAction(cancelAction)
 >
-        let photoLibraryAction = UIAlertAction(title: "Photo from Library", style: .Default) { (action) in
+          let photoLibraryAction = UIAlertAction(title: "Photo from Library", style: .Default) { (action) in
           // do nothing yet...
         }
 >
@@ -221,18 +219,17 @@ Replace the empty implementation of `showPhotoSourceSelection()` with the follow
 >
         // Only show camera option if rear camera is available
         if (UIImagePickerController.isCameraDeviceAvailable(.Rear)) {
-          let cameraAction = UIAlertAction(title: "Photo from Camera", style: .Default) { (action) in
+            let cameraAction = UIAlertAction(title: "Photo from Camera", style: .Default) { (action) in
             // do nothing yet...
           }
 >
-          alertController.addAction(cameraAction)
+            alertController.addAction(cameraAction)
         }
 >
         viewController.presentViewController(alertController, animated: true, completion: nil)
       }
 
-In the first line we set up the `UIAlertController` by providing it with a `message`
-and a `preferredStyle`. The `UIAlertController` can be used to present different types of popups. By choosing the `.ActionSheet` option we create a popup that gets displayed from the bottom edge of the screen.
+In the first line we set up the `UIAlertController` by providing it with a `message` and a `preferredStyle`. The `UIAlertController` can be used to present different types of popups. By choosing the `.ActionSheet` option we create a popup that gets displayed from the bottom edge of the screen.
 
 After the initial set up, we add different `UIAlertAction`s to the alert controller, each action will result in one additional button on the popup.
 
@@ -240,7 +237,7 @@ The first action is the default *Cancel* action; you should add this one to almo
 
 The second option allows the user to pick an image from the library. We create a `UIAlertAction` for the library and add it to the `UIAlertController`. (The body of the action is empty right now, but we will add the code in the next section.)
 
-The third action, allowing the user to take a new photo, is special because it should only be displayed if the device has access to a camera. We check if the current device has a rear camera by using the `isCameraDeviceAvailable(_:UIImagePickerControllerCameraDevice)` method. If the rear camera is available, we add an action to the alert controller that allows the user to take a new photo. (We will add code to the body of this action in the next section as well.)
+The third action, allowing the user to take a new photo, is special because it should only be displayed if the device has access to a camera. We check if the current device has a rear camera by using the `isCameraDeviceAvailable(_:)` method. If the rear camera is available, we add an action to the alert controller that allows the user to take a new photo. (We will add code to the body of this action in the next section as well.)
 
 In the very last line we present the `alertController`. As we discussed earlier, view controllers can only be presented from other view controllers. We use the reference that we've stored in the `viewController` property and call the `presentViewController` method on it. Now the popup will be displayed on whichever view controller is stored in the `viewController` property!
 
@@ -250,33 +247,40 @@ None of this code will run at this point - to test it we need to connect it to t
 
 Time to switch back to the `TimelineViewController`. Currently we are printing a string to the console whenever the camera button is tapped; now we want to create an instance of a `PhotoTakingHelper` that will display our popup.
 
-First, let's change the tab bar related code:
+We're going to want to store an instance of the `PhotoTakingHelper` class as a property of `TimelineViewController`, so let's do that first:
 
 > [action]
-Change the the tab bar related code to call the `takePhoto` method, instead of printing to the console:
+Add the property definition for `photoTakingHelper` to the top of the `TimelineViewController` class:
+>
+    var photoTakingHelper: PhotoTakingHelper?
+
+Next, let's change the tab bar related code:
+
+> [action]
+Change the the tab bar related code to call the `takePhoto()` method, instead of printing to the console. We'll implement `takePhoto()` after:
 >
     func tabBarController(tabBarController: UITabBarController, shouldSelectViewController viewController: UIViewController) -> Bool {
-      if (viewController is PhotoViewController) {
-        takePhoto()
-        return false
-      } else {
-        return true
-      }
+        if (viewController is PhotoViewController) {
+            takePhoto()
+            return false
+        } else {
+            return true
+        }
     }
 
-Within the `takePhoto` method, which we'll implement next, we will create the `PhotoTakingHelper`.
+Within the `takePhoto` method, we will create the `PhotoTakingHelper`.
 
 > [action]
 Add the `takePhoto` method to the `TimelineViewController` class:
 >
     func takePhoto() {
-        // instantiate photo taking class, provide callback for when photo  is selected
+        // instantiate photo taking class, provide callback for when photo is selected
         photoTakingHelper = PhotoTakingHelper(viewController: self.tabBarController!) { (image: UIImage?) in
-        // don't do anything, yet...
-      }
+            // don't do anything, yet...
+        }
     }
 
-Within the `takePhoto` method we're creating an instance of `PhotoTakingHelper`. We're assigning that instance to the `photoTakingHelper` property (which we'll create in a second).
+Within the `takePhoto` method we're creating an instance of `PhotoTakingHelper`. We're assigning that instance to the `photoTakingHelper` property.
 
 The initializer of the `PhotoTakingHelper` takes two parameters: the view controller on which the popup should be presented and the callback that should run as soon as a photo has been selected.
 
@@ -287,7 +291,7 @@ As a callback we pass a *closure*. A closure is basically a function without a n
 This part of the code is the closure:
 
     { (image: UIImage?) in
-      // don't do anything, yet...
+        // don't do anything, yet...
     }
 
 The entire closure is enclosed in curly braces. It starts with the list of parameters in parentheses. Our callback receives a `UIImage?` from the `PhotoTakingHelper`. The `in` keyword marks the beginning of the actual code of the closure - for now we only have a comment in there.
@@ -300,28 +304,21 @@ This is called a [trailing closure](https://developer.apple.com/library/ios/docu
 
 ![image](trailing_closure.png)
 
-Trailing closures can be used whenever the last argument of a function or initializer is a closure.
+Trailing closures can be used whenever the last argument of a function or initializer is a closure. It's simply an optional bit of syntax that makes our code look a little bit nicer.
 
 Without a trailing closure the call to the initializer would look like this:
 
     PhotoTakingHelper(viewController: self.tabBarController!, callback: { (image: UIImage?) in
-    // don't do anything, yet...
+        // don't do anything, yet...
     })
 
 Using trailing closures can make our code a little bit more readable because we don't need a closing parenthesis after the closing curly braces of the closure. Feel free to choose whichever option you prefer!
-
-There is one last thing we have to do before we are ready to test the interaction between the `TimelineViewController` and the `PhotoTakingHelper`.
-
-> [action]
-Add the property definition for `photoTakingHelper` to the top of the `TimelineViewController` class:
->
-    var photoTakingHelper: PhotoTakingHelper?
 
 Now our code should compile and run! Time to test if everything is working as expected.
 
 When you run the app and tap the camera button, you should see a popup show up:
 
-![image](popup_working.png)
+![action dialogue](popup_working.png)
 
 Well done! At this point you should have a basic understanding of how information can travel through different classes in our apps - as an iOS developer you will use callbacks in the form of closures pretty frequently.
 
@@ -335,9 +332,9 @@ Let's add a method to the `PhotoTakingHelper` that presents the `UIImagePickerCo
 Add the `showImagePickerController` method to the `PhotoTakingHelper` class:
 >
     func showImagePickerController(sourceType: UIImagePickerControllerSourceType) {
-      imagePickerController = UIImagePickerController()
-      imagePickerController!.sourceType = sourceType
-      self.viewController.presentViewController(imagePickerController!, animated: true, completion: nil)
+        imagePickerController = UIImagePickerController()
+        imagePickerController!.sourceType = sourceType
+        self.viewController.presentViewController(imagePickerController!, animated: true, completion: nil)
     }
 
 In the first line, this method creates a `UIImagePickerController`. In the second line, we set the `sourceType` of that controller. Depending on the `sourceType` the `UIImagePickerController` will activate the camera and display a photo taking overlay - or will show the user's photo library. Our `showImagePickerController` method takes the `sourceType` as an argument and hands it on to the `imagePickerController` - that allows the caller of this method to specify whether the camera or the photo library should be used as an image source.
@@ -353,15 +350,15 @@ Change the following section within `showPhotoSourceSelection()` so that the `sh
 >
     // Only show camera option if rear camera is available
     if (UIImagePickerController.isCameraDeviceAvailable(.Rear)) {
-      let cameraAction = UIAlertAction(title: "Photo from Camera", style: .Default) { (action) in
-        self.showImagePickerController(.Camera)
-      }
+        let cameraAction = UIAlertAction(title: "Photo from Camera", style: .Default) { (action) in
+            self.showImagePickerController(.Camera)
+        }
 >
       alertController.addAction(cameraAction)
     }
 >
     let photoLibraryAction = UIAlertAction(title: "Photo from Library", style: .Default) { (action) in
-      self.showImagePickerController(.PhotoLibrary)
+        self.showImagePickerController(.PhotoLibrary)
     }
 >
     ...
@@ -396,11 +393,11 @@ Let's start with the simple part - becoming the delegate of `UIImagePickerContro
 Extend the `showImagePickerController` method to include a line that sets up the `delegate` property of `imagePickerController`:
 >
     func showImagePickerController(sourceType: UIImagePickerControllerSourceType) {
-      imagePickerController = UIImagePickerController()
-      imagePickerController!.sourceType = sourceType
-      imagePickerController!.delegate = self
+        imagePickerController = UIImagePickerController()
+        imagePickerController!.sourceType = sourceType
+        imagePickerController!.delegate = self
 >
-      self.viewController.presentViewController(imagePickerController!, animated: true, completion: nil)
+        self.viewController.presentViewController(imagePickerController!, animated: true, completion: nil)
     }
 
 Now that we're the `delegate` we need to conform to some protocols. Otherwise the compiler will be unhappy and our project won't run!
@@ -416,15 +413,15 @@ Add the extension following extension to _PhotoTakingHelper.swift_ - always make
 >
     extension PhotoTakingHelper: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 >
-      func imagePickerController(picker: UIImagePickerController, didFinishPickingImage image: UIImage!, editingInfo: [NSObject : AnyObject]!) {
-        viewController.dismissViewControllerAnimated(false, completion: nil)
+        func imagePickerController(picker: UIImagePickerController, didFinishPickingImage image: UIImage!, editingInfo: [NSObject : AnyObject]!) {
+            viewController.dismissViewControllerAnimated(false, completion: nil)
 >
-        callback(image)
-      }
+            callback(image)
+        }
 >
-      func imagePickerControllerDidCancel(picker: UIImagePickerController) {
-        viewController.dismissViewControllerAnimated(true, completion: nil)
-      }
+        func imagePickerControllerDidCancel(picker: UIImagePickerController) {
+            viewController.dismissViewControllerAnimated(true, completion: nil)
+        }
 >
     }
 
@@ -434,7 +431,7 @@ Within `imagePickerControllerDidCancel` we simply hide the image picker controll
 
 Before we became the delegate of the image picker controller, it was automatically hidden as soon as a user hit the cancel button or selected an image. Now that we are the delegate, we are responsible for hiding it.
 
-The `imagePickerController(_:, didFinishPickingImage:)` method is also pretty simple. First we hide the image picker controller, then we call the `callback` and hand it the `image` that has been selected as an argument. After this line runs the `TimelineViewController` will have received the image through its callback closure.
+The `imagePickerController(_:didFinishPickingImage:)` method is also pretty simple. First we hide the image picker controller, then we call the `callback` and hand it the `image` that has been selected as an argument. After this line runs the `TimelineViewController` will have received the image through its callback closure.
 
 Let's test if that is actually working correctly.
 
@@ -446,13 +443,13 @@ Open _`TimelineViewController.swift`_ and replace the comment in our `PhotoTakin
 Then set a breakpoint in that line. Next, run the app and select an image using the image picker.
 The debugger should halt on the breakpoint and you should see that the callback receives a value for the `image` parameter:
 >
-![image](callback_successful.png)
+![breakpoint triggered](callback_successful.png)
 
 As long as the value in the red circle is **not** showing `0x0000000000000000` (which would mean the `image` argument is `nil`), then everything is working! We now have access to the selected image inside of the `TimelineViewController`.
 
 Here's a short reminder of all the information flow you have implemented in this step:
 
-![image](photo_taking_structure.png)
+![select image flow diagram](photo_taking_structure.png)
 
 **Well done!**
 
