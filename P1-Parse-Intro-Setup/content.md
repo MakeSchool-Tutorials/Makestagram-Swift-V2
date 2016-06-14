@@ -31,7 +31,7 @@ Once you have gone through that tutorial you will have a Parse server set up, an
 
 ![Parse Dashboard initial view](parse_dashboard.png)
 
-You should note that due to how [Heroku's pricing](https://www.heroku.com/pricing) works, your free Parse server and dashboard will sleep when they are not being used. As a consequence, the first action you take after a period of inactivity will sometimes take upwards of 2 seconds. Subsequent actions will seem much snappier in comparison.  Heroku's paid tiers remove this limitation.
+You should note that due to how [Heroku's pricing](https://www.heroku.com/pricing) works, your free Parse server and dashboard will sleep when they are not being used. As a consequence, the first action you take after a period of inactivity will sometimes take upwards of 2 seconds. Subsequent actions will seem much snappier in comparison. Heroku's paid tiers remove this limitation.
 
 > [action]
 Log in to your dashboard and select the first instance of your app that says `AppName` but not `AppName Production`
