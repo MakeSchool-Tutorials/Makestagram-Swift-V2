@@ -101,7 +101,7 @@ Now we are ready to add our dependencies to this file.
 > Then, return to the command line and run:
 >
     pod install
->
+> This step may take some time the first time you run it, up to 10 or 15 minutes. 
 
 Now your dependencies will be download and installed.
 
