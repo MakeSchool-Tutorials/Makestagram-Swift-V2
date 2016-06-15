@@ -13,7 +13,7 @@ _Access Control Lists_ (ACL) allow you to define lists of users that have certai
 
 The current ACL for each object can be found by looking in the column labeled *ACL* in the Parse data browser.
 
-![image](public_read_write.png)
+![Parse database row](public_read_write.png)
 
 For most objects you store in Parse **you don't want this default ACL.** If any of your users gets access to your _ClientKey_ (which is possible in multiple different ways) they will be able to modify all objects that have public write access!
 
@@ -31,24 +31,24 @@ Parse provides an API call that allows us to change the default ACL for all obje
 We will set up this default ACL directly after app launch, within our `AppDelegate`.
 
 > [action]
-Extend the `application(_:, didFinishLaunchingWithOptions:)` method, in the `AppDelegate` class, by adding the three lines of code that change the default ACL:
+Extend the `application(_:didFinishLaunchingWithOptions:)` method, in the `AppDelegate` class, by adding the three lines of code that change the default ACL:
 >
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
 >
-      //...
+        //...
 >
-      let acl = PFACL()
-      acl.publicReadAccess = true
-      PFACL.setDefaultACL(acl, withAccessForCurrentUser: true)
+        let acl = PFACL()
+        acl.publicReadAccess = true
+        PFACL.setDefaultACL(acl, withAccessForCurrentUser: true)
 >
-      return true
+        return true
     }
 
 Now every new Parse object will be equipped with public read access and write access that is limited to the object's creator.
 
 If you upload a new photo to Parse, you should now see a different entry in the ACL column:
 
-![image](public_read_user_write.png)
+![Parse row in database](public_read_user_write.png)
 
 With this new default setting our app content is already much safer!
 
@@ -62,7 +62,7 @@ Use the Parse data browser to delete all rows of the `Post` class:
 1. Check all the check boxes for each row
 1. Click `Edit`, select `Delete these rows`, and confirm
 >
-![image](delete_posts.png)
+![Deleting all the Post rows in the Parse Dashboard](delete_posts.png)
 
 #Conclusion
 
