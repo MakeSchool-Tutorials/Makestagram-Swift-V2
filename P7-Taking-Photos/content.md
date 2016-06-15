@@ -119,7 +119,7 @@ Before we jump into implementing our photo code, let's create a new folder for o
 Open the folder that contains your Xcode project in Finder: and create a new folder called *PhotoTaking*. It should be on the same level as the *ViewController* folder:
 ![Right click Makestagram group, show in finder](show_in_finder.png)
 ![Create PhotoTaking folder](photo_taking_folder.png)
-Then add this new folder to your Xcode project:
+Then add this new folder to your Xcode project. As you're browsing, you'll see an *Options* button at the bottom of the dialogue. Expand that and make sure *Create Groups* is selected, and not *Create Folder References*:
 <video width="100%" controls>
   <source src="https://s3.amazonaws.com/mgwu-misc/SA2015/AddPhotoFolder_small.mov" type="video/mp4">
 
