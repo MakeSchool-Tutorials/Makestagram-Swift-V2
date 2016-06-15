@@ -9,11 +9,11 @@ We will use bindings to improve our photo downloading code. Currently, it has th
 
 1. We are downloading all of the photos on the main thread - that blocks the UI of our app!
 2. The image download is happening inside of the `TimelineViewController`, that's not necessarily where it belongs.
-3. We are downloading the photos for all posts upfront - if we had 50 posts in the timeline we would download 50 photos right away; many which our users would likely not see (did you know that the average app usage time is just a little bit above one minute?)
+3. We are downloading the photos for all posts upfront - if we had 50 posts in the timeline we would download 50 photos right away; many which our users would likely not see. Did you know that the average app usage time is just a little bit over one minute?
 
 We're going to fix all of these three issues throughout this step:
 
-1. We will perform the download of photos in the background.
+1. We will perform the photo downloads in the background.
 2. We will move the photo download code into the `Post` class.
 3. We will only download photos of posts that are currently displayed.
 
@@ -25,13 +25,13 @@ The way our timeline currently works, we wait until all data is available, then 
 
 In the future we want to download the photos lazily and on a background thread. That will lead to a situation as shown below:
 
-![image](image_download.png)
+![cell image download diagram](image_download.png)
 
 First, we perform the timeline query. That query downloads all posts for a user's timeline. These posts contain metadata (e.g. which user created the post, when it was created, etc.). As soon as this metadata is available we create our table view and create all of the table view cells; however, at this point, none of the images are loaded yet.
 
 As soon as a cell appears on screen we start the download of the image. That's the lazy part in _lazy loading_ - we don't load the information until we need it. That download will take a little time. Once the download completes, we want to update the table view cell so that the downloaded photo gets displayed.
 
-This is what we call an _asynchronous_ operation. Instead of having all the information we need available right now, we are getting some time in the future. As soon as that information is available, we want to perform a certain operation - in this case updating the image of the table view cell.
+This is what we call an _asynchronous_ operation. Instead of having all the information we need available right now, we are getting it some time in the future. As soon as that information is available, we want to perform a certain operation - in this case updating the image of the table view cell.
 
 There are many different ways we can deal with data that is available asynchronously. In this tutorial we will be using _bindings_. Using a Swift library called [Bond](https://github.com/SwiftBond/Bond), we can handle asynchronous data as following:
 
@@ -67,26 +67,33 @@ Then we can add the property to store the `Post`.
 Add the following property and property observer to the `PostTableViewCell` class:
 >
     var post: Post? {
-      didSet {
-        // 1
-        if let post = post {
-          //2
-          // bind the image of the post to the 'postImage' view
-          post.image.bindTo(postImageView.bnd_image)
+        didSet {
+            // 1
+            if let post = post {
+                //2
+                // bind the image of the post to the 'postImage' view
+                post.image.bindTo(postImageView.bnd_image)
+            }
         }
-      }
     }
 
 1. Whenever a new value is assigned to the `post` property, we use _optional binding_ to check whether the new value is `nil`.
 2. If the value isn't `nil`, we create a binding between the `image` property of the post and the `image` property of the `postImageView` using the `.bindTo` method.
 
-Now our `PostTableViewCell` is able to receive and store a `Post` object and react to an asynchronously available image of that post! (However, don't be surprised if your project doesn't compile yet, we still have a few more steps before we are ready to run.)
+Now our `PostTableViewCell` is able to receive and store a `Post` object and react to an asynchronously available image of that post! However, don't be surprised that your project doesn't compile yet, we still have a few more steps before we are ready to run.
 
 ##Making the Image Property of a Post Observable
 
 To be able to use _bindings_ (`.bindTo`), our properties need to have a special type: They need to be `Observable`.
 
 Let's change the `image` property of `Post` to be `Observable` - then we'll discuss in detail what `Observable` means.
+
+> [action]
+Add the following import statement to _Post.swift_:
+>
+    import Bond
+    
+<!-- html comment to break boxes -->
 
 > [action]
 Change the property definition of `image` in the `Post` class to look as following:
@@ -100,12 +107,7 @@ As soon as we make a property `Observable`, we need to refer to the wrapped valu
     // we need to append .value to access the value wrapped by the Observable
     post.image.value
 
-This means we'll need to update the code that is currently referencing the `image` property. Before we can move on to that you need to import the _Bond_ framework into the _Post.swift_ file.
-
-> [action]
-Add the following import statement to _Post.swift_:
->
-    import Bond
+This means we'll need to update the code that is currently referencing the `image` property.
 
 ##Updating the Upload Post Method
 
@@ -115,25 +117,23 @@ Now we can start updating our code to work with the new `Observable` `image` pro
 Update `uploadPost` so that it looks as follows:
 >
     func uploadPost() {
+>        
+        if let image = image.value {
+>            
+            guard let imageData = UIImageJPEGRepresentation(image, 0.8) else {return}
+            guard let imageFile = PFFile(name: "image.jpg", data: imageData) else {return}
+>            
+            user = PFUser.currentUser()
+            self.imageFile = imageFile
+>            
+            photoUploadTask = UIApplication.sharedApplication().beginBackgroundTaskWithExpirationHandler { () -> Void in
+                UIApplication.sharedApplication().endBackgroundTask(self.photoUploadTask!)
+            }
 >
-      if let image = image.value {
->
-        photoUploadTask = UIApplication.sharedApplication().beginBackgroundTaskWithExpirationHandler {
-          () -> Void in
-          UIApplication.sharedApplication().endBackgroundTask(self.photoUploadTask!)
+            saveInBackgroundWithBlock { (success: Bool, error: NSError?) -> Void in
+                UIApplication.sharedApplication().endBackgroundTask(self.photoUploadTask!)
+            }
         }
->
-        let imageData = UIImageJPEGRepresentation(image, 0.8)
-        guard let imageFile = PFFile(data: imageData!) else {return}
-        imageFile.saveInBackgroundWithBlock(nil)
->
-        user = PFUser.currentUser()
-        self.imageFile = imageFile
-        saveInBackgroundWithBlock {
-          (success: Bool, error: NSError?) -> Void in
-          UIApplication.sharedApplication().endBackgroundTask(self.photoUploadTask!)
-        }
-      }
     }
 
 ##Adding a Download Image Method
@@ -144,18 +144,18 @@ We also wanted to move the image download from the `TimelineViewController` into
 Add the `downloadImage` method to the `Post` class:
 >
     func downloadImage() {
-      // if image is not downloaded yet, get it
-      // 1
-      if (image.value == nil) {
-        // 2
-        imageFile?.getDataInBackgroundWithBlock { (data: NSData?, error: NSError?) -> Void in
-          if let data = data {
-            let image = UIImage(data: data, scale:1.0)!
-            // 3
-            self.image.value = image
-          }
+        // if image is not downloaded yet, get it
+        // 1
+        if (image.value == nil) {
+            // 2
+            imageFile?.getDataInBackgroundWithBlock { (data: NSData?, error: NSError?) -> Void in
+                if let data = data {
+                    let image = UIImage(data: data, scale:1.0)!
+                    // 3
+                    self.image.value = image
+                }
+            }
         }
-      }
     }
 
 1. First, we check if `image.value` already has a stored value. We do this to avoid downloading images multiple times. (We only want to start the donwload if `image.value` is `nil`.)
@@ -172,14 +172,13 @@ Lastly, we need to update the `TimelineViewController`. Let's start with a very 
 Update the `takePhoto` method in `TimelineViewController` to access `image.value` instead of `image`
 >
     func takePhoto() {
-      // instantiate photo taking class, provide callback for when photo is selected
-      photoTakingHelper =
-        PhotoTakingHelper(viewController: self.tabBarController!) { (image: UIImage?) in
-          let post = Post()
-          // 1
-          post.image.value = image!
-          post.uploadPost()
-      }
+        // instantiate photo taking class, provide callback for when photo is selected
+        photoTakingHelper = PhotoTakingHelper(viewController: self.tabBarController!) { (image: UIImage?) in
+                let post = Post()
+                // 1
+                post.image.value = image!
+                post.uploadPost()
+        }
     }
 
 1. Because `image` is now an `Observable` type, we need to store the image using the `.value` property.
@@ -192,14 +191,13 @@ We no longer want to download all images immediately after the timeline query co
 Update the `viewDidAppear` method in `TimelineViewController` by removing the image download code. The result should look like this:
 >
     override func viewDidAppear(animated: Bool) {
-      super.viewDidAppear(animated)
->
-      ParseHelper.timelineRequestForCurrentUser {
-        (result: [PFObject]?, error: NSError?) -> Void in
-          self.posts = result as? [Post] ?? []
->
-          self.tableView.reloadData()
-      }
+        super.viewDidAppear(animated)
+>        
+        ParseHelper.timelineRequestForCurrentUser { (result: [PFObject]?, error: NSError?) -> Void in
+            self.posts = result as? [Post] ?? []
+            
+>            self.tableView.reloadData()
+        }
     }
 
 Now we are only downloading the metadata of all posts upfront and deferring the image download until a post is displayed.
@@ -217,15 +215,15 @@ Let's extend the `cellForRowAtIndexPath` method to include the call to `download
 Change the `cellForRowAtIndexPath` method to look as following:
 >
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-      let cell = tableView.dequeueReusableCellWithIdentifier("PostCell") as! PostTableViewCell
->
-      let post = posts[indexPath.row]
-      // 1
-      post.downloadImage()
-      // 2
-      cell.post = post
->
-      return cell
+        let cell = tableView.dequeueReusableCellWithIdentifier("PostCell") as! PostTableViewCell
+>        
+        let post = posts[indexPath.row]
+        // 1
+        post.downloadImage()
+        // 2
+        cell.post = post
+>        
+        return cell
     }
 
 1. Directly before a post will be displayed, we trigger the image download.
@@ -235,7 +233,6 @@ After disassembling almost our entire app we are now finally back in a state tha
 
 #Conclusion
 
-Wow, this step consisted of a huge set of changes! While restructuring our code you have learned how to deal with data that is available asynchronously. When working with network requests you will frequently come back to use this knowledge.
-You have also learned how to load information lazily. Especially on mobile devices we should defer any network requests and computationally expensive tasks until they are absolutely necessary!
+Wow, this step consisted of a huge set of changes! While restructuring our code you have learned how to deal with data that is available asynchronously. When working with network requests you will frequently come back to use this knowledge. You have also learned how to load information lazily. Especially on mobile devices we should defer any network requests and computationally expensive tasks until they are absolutely necessary!
 
 In the next step we will focus on some visual progress again. We will bring the `PostTableViewCell` into its final design, which will include a lovely shaped heart button!
