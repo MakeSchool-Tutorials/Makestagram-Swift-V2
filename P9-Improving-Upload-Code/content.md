@@ -3,7 +3,7 @@ title: "Improving the Upload Code and Adding a Post Class"
 slug: improving-photo-upload-parse
 ---
 
-Now it's time to move from a working solution to a good one. In the last step we have identified two issues with our current uploading code:
+Now it's time to move from a working solution to a good one. In the last step we identified two issues with our current uploading code:
 
 1. We need to handle the result of saving in the background.
 2. We need to store more information along with the `Post` that we're creating. Right now we are only storing the image file, but we also need to store the `user` to which the post belongs
@@ -12,22 +12,21 @@ Actually, there's a third issue. All of our uploading code is currently containe
 
 Instead of having the code in the `TimelineViewController`, the photo upload should be handled by a separate `Post` class.
 
-Let's start by creating this separate class - then we will tackle the two issues listed above!
+Let's start by creating the `Post` class - then we will tackle the two issues listed above!
 
 #Creating a Custom Parse Class
 
 As you have seen, we can store information in Parse without using custom classes:
 
     let imageData = UIImageJPEGRepresentation(image, 0.8)!
-    let imageFile = PFFile(data: imageData)!
-    imageFile.saveInBackground()
+    let imageFile = PFFile(name: "image.jpg", data: imageData)!
 
     let post = PFObject(className: "Post")
     post["imageFile"] = imageFile
     post.saveInBackground()
 
 
-We can simply use the `PFObject` class and specify a `className`. This way however, we don't have a good place to store the image uploading code. And if we need to modify many more of the post's properties, the code will become difficult to read.
+We can simply use the `PFObject` class and specify a `className`. However, by doing it this way, we don't have a good place to put the image uploading code. And if we need to modify many more of the post's properties, the code will become difficult to read.
 
 It would be better if you could upload a post like this:
 
@@ -37,7 +36,7 @@ It would be better if you could upload a post like this:
 
 This way we could hide a lot of code inside of `uploadImage`.
 
-I would recommend this approach for your own apps as well. If any of your Parse classes needs to be stored or loaded with complex code upload / download code - consider using a custom class.
+I would recommend this approach for your own apps as well. If any of your Parse classes needs to be stored or loaded with complex upload / download code - consider using a custom class.
 
 So how can we create a custom `Post` class?
 
@@ -49,9 +48,9 @@ The first step will be creating a source code file for our new class. We'll also
 
 > [action]
 Create a new _Models_ folder as child of the _Makestagram_ folder:
-![image](add_models_folder.png)
+![adding Models folder in Finder](add_models_folder.png)
 Then add the folder to Xcode and create a new subclass of `PFObject` called `Post`. The result in Xcode should look like this:
-![image](models_group.png)
+![Added Models group in Xcode](models_group.png)
 
 We're going to fill the `Post` class with some [_boilerplate_](http://en.wikipedia.org/wiki/Boilerplate_code#In_object-oriented_programming) code.
 
@@ -65,29 +64,29 @@ Replace the content of _Post.swift_ with the following source code:
     class Post : PFObject, PFSubclassing {
 >
       // 2
-      @NSManaged var imageFile: PFFile?
-      @NSManaged var user: PFUser?
+        @NSManaged var imageFile: PFFile?
+        @NSManaged var user: PFUser?
 >
 >
-      //MARK: PFSubclassing Protocol
+        //MARK: PFSubclassing Protocol
 >
-      // 3
-      static func parseClassName() -> String {
-        return "Post"
-      }
->
-      // 4
-      override init () {
-        super.init()
-      }
->
-      override class func initialize() {
-        var onceToken : dispatch_once_t = 0;
-        dispatch_once(&onceToken) {
-          // inform Parse about this subclass
-          self.registerSubclass()
+        // 3
+        static func parseClassName() -> String {
+            return "Post"
         }
-      }
+>
+        // 4
+        override init () {
+            super.init()
+        }
+>
+        override class func initialize() {
+            var onceToken : dispatch_once_t = 0;
+            dispatch_once(&onceToken) {
+                // inform Parse about this subclass
+                self.registerSubclass()
+            }
+        }
 >
     }
 
@@ -95,9 +94,9 @@ Replace the content of _Post.swift_ with the following source code:
 2. Next, define each property that you want to access on this Parse class. For our `Post` class that's the `user` and the `imageFile` of a post. That will allow you to change the code that accesses properties through strings
        `post["imageFile"] = imageFile`
     into code that uses Swift properties
-       `post.imageFile = imageFile`.
+       `post.imageFile = imageFile`. Notice that we prefixed the properties with `@NSManaged`. This tells the Swift compiler that we won't initialize the properties in the initializer, because Parse will take care of it for us.
 3. By implementing the `parseClassName` static function, you create a connection between the Parse class and your Swift class.
-4. `init` and `initialize` are pure boilerplate code - copy these two into any custom Parse class that you're creating.
+4. `init` and `initialize` are purely boilerplate code - copy these two into any custom Parse class that you're creating.
 
 Now we have set up the skeleton for our Parse class. Follow these steps whenever you want to create a custom Parse class in your own apps.
 
@@ -127,20 +126,19 @@ Next, we'll move the uploading code into the `uploadPost` method.
 Add the following method to the `Post` class:
 >
     func uploadPost() {
-      if let image = image {
-        // 1
-        let imageData = UIImageJPEGRepresentation(image, 0.8)!
-        let imageFile = PFFile(data: imageData)!
-        imageFile.saveInBackground()
+        if let image = image {
+            // 1
+            let imageData = UIImageJPEGRepresentation(image, 0.8)!
+            let imageFile = PFFile(name: "image.jpg", data: imageData)!
 >
-        // 2
-        self.imageFile = imageFile
-        saveInBackground()
-      }
+            // 2
+            self.imageFile = imageFile
+            saveInBackground()
+        }
     }
 
-1. Whenever the `uploadPost` method is called, we grab the photo that shall be uploaded from the `image` property; turn it into a `PFFile` and upload it.
-2. Once we have saved the `imageFile` we assign it to `self` (which is the `Post` that's being uploaded). Then we call `saveInBackground()` to store the `Post`.
+1. When the `uploadPost` method is called, we grab the photo to be uploaded from the `image` property; turn it into a `PFFile` called `imageFile`.
+2. We assign `imageFile` to `self.imageFile`. Then we call `saveInBackground()` to upload the `Post`.
 
 Now creating a `Post` and uploading it has become a lot simpler. We can change the code in the `TimelineViewController` accordingly.
 
@@ -148,13 +146,12 @@ Now creating a `Post` and uploading it has become a lot simpler. We can change t
 Update the `takePhoto` method in the `TimelineViewController` class to use the new `Post` class:
 >
     func takePhoto() {
-      // instantiate photo taking class, provide callback for when photo is selected
-      photoTakingHelper =
-        PhotoTakingHelper(viewController: self.tabBarController!) { (image: UIImage?) in
-          let post = Post()
-          post.image = image
-          post.uploadPost()
-      }
+        // instantiate photo taking class, provide callback for when photo is selected
+        photoTakingHelper = PhotoTakingHelper(viewController: self.tabBarController!) { (image: UIImage?) in
+            let post = Post()
+            post.image = image
+            post.uploadPost()
+        }
     }
 
 If you like you can test this new version of our solution. You should see that it's working! Now that we've set up a nice structure for uploading posts, we can tackle the two issues stated at the beginning of this step.
@@ -183,13 +180,13 @@ Simply put, one could say that a typical iOS app repeats three steps over and ov
 
 This means the workflow of your typical app can be visualized like this:
 
-![image](threading_1.png)
+![singled-threaded application architecture](threading_1.png)
 
 This system works great as long as your _Application Code_ runs very fast; however, some times we need to perform tasks that can take a longer amount of time - such as uploading an image. With bad connectivity, uploading an image can take multiple seconds.
 
 If your application code takes longer to run, the workflow diagram will change to something like this:
 
-![image](threading_2.png)
+![singled-threaded application architecture with blocking code](threading_2.png)
 
 Now you can see that your long running _Application Code_ is blocking the operating system's code from running. As long as you are uploading an image, the operating system will not be able to respond to user input - your app will freeze!
 
@@ -197,7 +194,7 @@ How do we avoid this issue?
 
 We can perform the long-running task in the _background_, which means it will run in **parallel** to our other application code. The result will look like this:
 
-![image](threading_3.png)
+![multi-threaded application](threading_3.png)
 
 You can see that our long-running task is now no longer blocking the operating system's code, because it is running in a different _thread_. Now our photo upload can happen while our app still responds smoothly to user input.
 
@@ -209,22 +206,39 @@ Now that you understand the theory, let's move on.
 
 Even though the theory might sound a little bit complicated, the implementation of threading with Parse is fairly simple.
 
-By calling the `saveInBackground` method, uploading the data happens on a background thread, and our app no longer freezes.
+By calling the `saveInBackground` method, uploading the data happens on a background thread, and our app's UI isn't frozen by something blocking the main thread.
 
 Now to improve our code we are going to use `saveInBackgroundWithBlock` and `guard`.
 
 >
     func uploadPost() {
-      if let image = image {
-        guard let imageData = UIImageJPEGRepresentation(image, 0.8) else {return}
-        guard let imageFile = PFFile(data: imageData) else {return}
-        imageFile.saveInBackgroundWithBlock(nil)
+        if let image = image {
+            guard let imageData = UIImageJPEGRepresentation(image, 0.8) else {return}
+            guard let imageFile = PFFile(name: "image.jpg", data: imageData) else {return}
 >
-        self.imageFile = imageFile
-        saveInBackgroundWithBlock(nil)
-      }
+            self.imageFile = imageFile
+            saveInBackgroundWithBlock(nil)
+        }
     }
 
+
+What does `guard` do? `guard` is just like optional binding in that it's used to unwrap optionals. With optional binding, we want to execute some code when the variable exists:
+
+	if let x = x {
+		// let's do some stuff with x!
+	}
+
+With `guard`, we want to execute some code when the variable doesn't exist:
+
+	guard let x = x else {
+		// oh no! x is nil!
+		// let's tell the user that an error occured
+		// or just run away
+		return
+	}
+
+
+We used `guard` to exit the `uploadPost()` method early if creating the `imageData` or `imageFile` fail for some reason.
 
 You might wonder why we are passing a `nil` value to this method:
 
@@ -232,15 +246,13 @@ You might wonder why we are passing a `nil` value to this method:
 
 The `saveInBackgroundWithBlock` method allows us to pass it a _callback_ in the form of a closure (the same concept that we've used for our `PhotoTakingHelper`). The code in that callback is executed once the task running on the background thread is completed (e.g. when the photo upload is completed).
 
-This can be extremely useful. Right now however, we don't need be informed when the upload completes, so we pass `nil` to the method.
-
-Also, what does `guard` do? `guard` is a special _control flow_ statement that literally _guards_ our code against the potential crash we were talking about. If the statement succeeds, the code will continue to run. If not, it will run the `else` block of code which is *required* by Swift and Xcode to exit the current function. So for now, we will use `return` to exit the function early and avoid a crash, but in your app, you may want to handle this case differently such as alerting the user to the error. This will be discussed in a future section.
+This can be extremely useful. However currently, we don't need be informed when the upload completes, so we pass `nil` to the method.
 
 #Adding the User to the Post
 
 If you take a look at any of the posts that we've uploaded so far, you'll see that the `user` column in the Parse data browser shows that the entry is _undefined_:
 
-![image](user_undefined.png)
+![Post row in Parse with undefined user](user_undefined.png)
 
 This means that we currently aren't storing information about which post has been created by which user.
 
@@ -250,23 +262,22 @@ This can be fixed very easily. Whenever a `Post` gets uploaded, we associate it 
 Extend the `uploadPost` method, so that it sets the `user` property of the post:
 >
     func uploadPost() {
-      if let image = image {
-      guard let imageData = UIImageJPEGRepresentation(image, 0.8) else {return}
-      guard let imageFile = PFFile(data: imageData) else {return}
-      imageFile.saveInBackgroundWithBlock(nil)
+        if let image = image {
+            guard let imageData = UIImageJPEGRepresentation(image, 0.8) else {return}
+            guard let imageFile = PFFile(name: "image.jpg", data: imageData) else {return}
 >
-      // any uploaded post should be associated with the current user
-      user = PFUser.currentUser()
-      self.imageFile = imageFile
-      saveInBackgroundWithBlock(nil)
-      }
+            // any uploaded post should be associated with the current user
+            user = PFUser.currentUser()
+            self.imageFile = imageFile
+            saveInBackgroundWithBlock(nil)
+        }
     }
 
 That was an easy fix! `PFUser.currentUser()` allows us to access the user that's logged in. We assign that user to the `user` property of the `Post`.
 
 If you create another `Post` with this new code in place, you should see that the `user` property is stored in Parse and shows up in the data browser:
 
-![image](user_working.png)
+![Post row in Parse with defined user](user_working.png)
 
 Great! We have created the first valid post!
 
@@ -278,42 +289,43 @@ To avoid this issue Apple provides an API that allows us to request some extra t
 
 Let's request some extra time for our photo upload.
 
-> [action]
-Extend the `uploadPost` method to look as follows:
->
-    func uploadPost() {
-      if let image = image {
-        guard let imageData = UIImageJPEGRepresentation(image, 0.8) else {return}
-        guard let imageFile = PFFile(data: imageData) else {return}
->
-        // 1
-        photoUploadTask = UIApplication.sharedApplication().beginBackgroundTaskWithExpirationHandler { () -> Void in
-          UIApplication.sharedApplication().endBackgroundTask(self.photoUploadTask!)
-        }
->
-        // 2
-        imageFile.saveInBackgroundWithBlock { (success: Bool, error: NSError?) -> Void in
-          // 3
-          UIApplication.sharedApplication().endBackgroundTask(self.photoUploadTask!)
-        }
->
-        // any uploaded post should be associated with the current user
-        user = PFUser.currentUser()
-        self.imageFile = imageFile
-        saveInBackgroundWithBlock(nil)
-      }
-    }
-
-1. As soon as a post gets uploaded we create a background task. When a background task gets created iOS generates a unique ID and returns it. We store that unique id in the `photoUploadTask` property. The API requires us to provide an _expirationHandler_ in the form of a closure. That closure runs when the extra time that iOS permitted us has expired. In case the additional background time wasn't sufficient, we are required to cancel our task! Within this block you should delete any temporary resources that you created - in the case of our photo upload we don't have any. Additionally you have to call `UIApplication.sharedApplication().endBackgroundTask`, otherwise your app will be terminated!
-2. After we've created the background task we save the `imageFile` by calling `saveInBackgroundWithBlock`; however, this time we aren't handing `nil` as a completion handler!
-3. Within the completion handler of `saveInBackgroundWithBlock` we inform iOS that our background task is completed. This block gets called as soon as the image upload is finished. The API for background jobs makes us responsible for calling `UIApplication.sharedApplication().endBackgroundTask` as soon as our work is completed.
-
-Next, we'll need to add the `photoUploadTask` property that we are referencing from the `uploadPhoto` method.
+First, we'll need to add a `UIBackgroundTaskIdentifier?` property that we are going to use in the `uploadPost()` method.
 
 > [action]
-Add the `photoUploadTask` property to the `Post` class:
+Add a `photoUploadTask` property to the `Post` class:
 >
     var photoUploadTask: UIBackgroundTaskIdentifier?
+
+<!-- html comment to break boxes -->
+
+> [action]
+Next, extend the `uploadPost` method to look as follows:
+>
+    func uploadPost() {
+        if let image = image {
+            guard let imageData = UIImageJPEGRepresentation(image, 0.8) else {return}
+            guard let imageFile = PFFile(name: "image.jpg", data: imageData) else {return}
+>            
+            // any uploaded post should be associated with the current user
+            user = PFUser.currentUser()
+            self.imageFile = imageFile
+>            
+            // 1
+            photoUploadTask = UIApplication.sharedApplication().beginBackgroundTaskWithExpirationHandler { () -> Void in
+                UIApplication.sharedApplication().endBackgroundTask(self.photoUploadTask!)
+            }
+>            
+            // 2
+            saveInBackgroundWithBlock() { (success: Bool, error: NSError?) in
+                // 3
+>                UIApplication.sharedApplication().endBackgroundTask(self.photoUploadTask!)
+            }
+        }
+    }
+
+1. First we create a background task. When a background task gets created iOS generates a unique ID and returns it. We store that unique id in the `photoUploadTask` property. The API requires us to provide an _expirationHandler_ in the form of a closure. That closure runs when the extra time that iOS permitted us has expired. In case the additional background time wasn't sufficient, we are required to cancel our task! Within this block you should delete any temporary resources that you created - in the case of our photo upload we don't have any. Additionally you have to call `UIApplication.sharedApplication().endBackgroundTask`, otherwise your app will be terminated!
+2. After we've created the background task we save the post and `imageFile` by calling `saveInBackgroundWithBlock()`; however, this time we aren't handing `nil` as a completion handler!
+3. Within the completion handler of `saveInBackgroundWithBlock()` we inform iOS that our background task is completed. This block gets called as soon as the image upload is finished. The API for background jobs makes us responsible for calling `UIApplication.sharedApplication().endBackgroundTask` as soon as our work is completed.
 
 Most of this code is once again _boilerplate code_. Instead of memorizing all the details of it, remember that is the place to come back to when you want to create a background job next time around.
 
@@ -324,7 +336,7 @@ We've improved the photo upload mechanism a lot! Here's what you have learned in
 - Why and how to create custom Parse class
 - The basics of threading:
   - We differentiate between the _Main_ thread and background threads. We want to avoid blocking the main thread.
-  - How to use Parse's `saveInBackgroundWithBlock` to perform long-running tasks on a background thread
+  - How to use Parse's `saveInBackgroundWithBlock()` to perform long-running tasks on a background thread
 - How to access the logged in user
 - How to ask for some extra background time when you are being suspended
 
