@@ -11,17 +11,17 @@ Now that all of this is working - let's work on cleaning up the code a little bi
 
 Oftentimes, the most difficult part about tidying up is finding a _good_ place for every object at hand. It's been mentioned a few times throughout the tutorial already, but as a reminder: *We want to avoid putting all of our code into view controllers.*
 
-Currently, the entire timeline request is written within the `TimelineViewController`. Later on we're going to add a bunch more such requests, which could quickly result in a `TimelineViewController` with well over 1000 lines.
+Currently, the entire timeline request is written within the `TimelineViewController`. Later on we're going to add a bunch more such requests, which could quickly result in a `TimelineViewController` with well over 1000 lines of code.
 
 **So where is the right place to put our query code?**
 
-If in doubt, create a new file (don't take this too literally...).
+When in doubt, create a new file (don't take this too literally...).
 
 We're going to introduce a _ParseHelper.swift_ file that will contain most of our code that's responsible for talking to our Parse server. That way we can avoid bloated view controllers.
 
 > [action]
 Start by adding the new _ParseHelper.swift_ file to the _Helpers_ group in your Xcode project:
-![image](add_parse_helper.png)
+![ParseHelper.swift in Helpers group](add_parse_helper.png)
 
 <!-- html comment to break boxes -->
 
@@ -35,32 +35,32 @@ Now we're going to tidy up the `TimelineViewController` by moving the timeline q
 > [action]
 Fill the _ParseHelper.swift_ file with the following content:
 >
-    import Foundation
-    import Parse
->
-    // 1
-    class ParseHelper {
->
-      // 2
-      static func timelineRequestForCurrentUser(completionBlock: PFQueryArrayResultBlock) {
-        let followingQuery = PFQuery(className: "Follow")
-        followingQuery.whereKey("fromUser", equalTo:PFUser.currentUser()!)
->
-        let postsFromFollowedUsers = Post.query()
-        postsFromFollowedUsers!.whereKey("user", matchesKey: "toUser", inQuery: followingQuery)
->
-        let postsFromThisUser = Post.query()
-        postsFromThisUser!.whereKey("user", equalTo: PFUser.currentUser()!)
->
-        let query = PFQuery.orQueryWithSubqueries([postsFromFollowedUsers!, postsFromThisUser!])
-        query.includeKey("user")
-        query.orderByDescending("createdAt")
->
-        // 3
-        query.findObjectsInBackgroundWithBlock(completionBlock)
-      }
->
-    }
+	import Foundation
+	import Parse
+>	
+	// 1
+	class ParseHelper {
+>	    
+	    // 2
+	    static func timelineRequestForCurrentUser(completionBlock: PFQueryArrayResultBlock) {
+	        let followingQuery = PFQuery(className: "Follow")
+	        followingQuery.whereKey("fromUser", equalTo:PFUser.currentUser()!)
+>	        
+	        let postsFromFollowedUsers = Post.query()
+	        postsFromFollowedUsers!.whereKey("user", matchesKey: "toUser", inQuery: followingQuery)
+>	        
+	        let postsFromThisUser = Post.query()
+	        postsFromThisUser!.whereKey("user", equalTo: PFUser.currentUser()!)
+>	        
+	        let query = PFQuery.orQueryWithSubqueries([postsFromFollowedUsers!, postsFromThisUser!])
+	        query.includeKey("user")
+	        query.orderByDescending("createdAt")
+>	        
+	        // 3
+	        query.findObjectsInBackgroundWithBlock(completionBlock)
+	    }
+>	    
+	}
 
 1. We are going to wrap all of our helper methods into a class called `ParseHelper`. We only do this so that all of the functions are bundled under the `ParseHelper` _namespace_. That makes the code easier to read in some cases. To call the timeline request function you call `ParseHelper.timelineRequestforUser...` instead of simply `timelineRequestforUser`. That way you always know exactly in which file you can find the methods that are being called.
 2. We mark this method as `static`. This means we can call it without having to create an instance of `ParseHelper` - you should do that for all helper methods. This method has only one parameter, `completionBlock`: the callback block that should be called once the query has completed. The type of this parameter is `PFQueryArrayResultBlock`. That's the default type for all of the callbacks in the Parse framework. By taking this callback as a parameter, we can call any Parse method and return the result of the method to that `completionBlock` - you'll see how we use that in _3._
@@ -72,23 +72,23 @@ Now we can tidy up the `TimelineViewController` and replace the query in there w
 Update the `viewDidAppear` method in `TimelineViewController` to look as following:
 >
     override func viewDidAppear(animated: Bool) {
-      super.viewDidAppear(animated)
->
-      ParseHelper.timelineRequestForCurrentUser {
-        (result: [PFObject]?, error: NSError?) -> Void in
-          self.posts = result as? [Post] ?? []
->
-          for post in self.posts {
-            do {
-              let data = try post.imageFile?.getData()
-              post.image = UIImage(data: data!, scale:1.0)
-            } catch {
-              print("could not get image")
+        super.viewDidAppear(animated)
+>        
+        ParseHelper.timelineRequestForCurrentUser {
+            (result: [PFObject]?, error: NSError?) -> Void in
+            self.posts = result as? [Post] ?? []
+>           
+            for post in self.posts {
+                do {
+                    let data = try post.imageFile?.getData()
+                    post.image = UIImage(data: data!, scale:1.0)
+                } catch {
+                    print("could not get image")
+                }
             }
-          }
->
-          self.tableView.reloadData()
-      }
+>            
+            self.tableView.reloadData()
+        }
     }
 
 Suddenly the `viewDidAppear` method is much, much shorter. All we need to do is call `ParseHelper.timelineRequestforCurrentUser` and hand the method a completion block (which we are doing using the trailing closure syntax).
