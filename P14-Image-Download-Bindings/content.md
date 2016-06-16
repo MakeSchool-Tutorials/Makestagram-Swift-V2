@@ -195,8 +195,8 @@ Update the `viewDidAppear` method in `TimelineViewController` by removing the im
 >        
         ParseHelper.timelineRequestForCurrentUser { (result: [PFObject]?, error: NSError?) -> Void in
             self.posts = result as? [Post] ?? []
-            
->            self.tableView.reloadData()
+>            
+            self.tableView.reloadData()
         }
     }
 
