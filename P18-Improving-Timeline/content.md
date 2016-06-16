@@ -5,15 +5,15 @@ slug: pull-to-refresh-endless-scrolling
 
 You have done a lot of work on this app so far - in this step we want to make your life just a little bit easier.
 
-We will implement a Pull-To-Refresh mechanism as you know it from most iOS apps. We will also implement a feature that will limit the amount of posts we download. Right now our approach is pretty inefficient; we download all posts in one query. Even though Parse automatically limits us to 100 posts, we are potentially downloading much more data than necessary.
+We will implement a Pull-To-Refresh mechanism that you may know from many iOS apps. We will also implement a feature that will limit the amount of posts we download. Right now our approach is pretty inefficient; we download all of the posts in one query. Thankfully Parse automatically limits us to 100 posts, but we are still potentially downloading much more data than necessary.
 
-After we are finished with this step, we will load posts in chunks of 5, only loading additional posts once the user reaches the end of the timeline. This behavior is well known from _Facebook_, _Instagram_, and many other apps.
+After we are finished with this step, we will load posts in chunks of 5, only loading additional posts once the user reaches the end of the timeline. This kind of behavior is well known and is used in Facebook, Instagram, and many other apps.
 
 To make your life easier we have delivered a lot of this functionality as part of a class called `TimelineComponent`. So instead of implementing all of this from scratch, you will learn how to use the `TimelineComponent`!
 
-The component will be responsible for storing all of the posts displayed on the timeline. It will also be responsible for triggering requests whenever a user refreshes the timeline. This means we will restructure a fair amount of our existing code in the `TimelineViewController`.
+`TimelineComponent` will be responsible for storing all of the posts displayed on the timeline. It will also be responsible for triggering requests whenever a user refreshes the timeline. This means we will restructure a fair amount of our existing code in the `TimelineViewController`.
 
-First we will change our timeline query so that we can load posts in certain ranges instead of all at once. Then we will walk through the different steps of adding the `TimelineComponent` to _Makestagram_.
+First we will change our timeline query so that we can load posts in certain ranges instead of all at once. Then we will walk through the different steps of adding the `TimelineComponent` to Makestagram.
 
 #Making the Timeline Query More Flexible
 
@@ -26,31 +26,32 @@ Let's implement the change and discuss it afterwards.
 > [action]
 Modify the `timelineRequestForCurrentUser` method to look as follows:
 >
-    // 1
     static func timelineRequestForCurrentUser(range: Range<Int>, completionBlock: PFQueryArrayResultBlock) {
-      let followingQuery = PFQuery(className: ParseFollowClass)
-      followingQuery.whereKey(ParseLikeFromUser, equalTo:PFUser.currentUser()!)
->
-      let postsFromFollowedUsers = Post.query()
-      postsFromFollowedUsers!.whereKey(ParsePostUser, matchesKey: ParseFollowToUser, inQuery: followingQuery)
->
-      let postsFromThisUser = Post.query()
-      postsFromThisUser!.whereKey(ParsePostUser, equalTo: PFUser.currentUser()!)
->
-      let query = PFQuery.orQueryWithSubqueries([postsFromFollowedUsers!, postsFromThisUser!])
-      query.includeKey(ParsePostUser)
-      query.orderByDescending(ParsePostCreatedAt)
->
-      // 2
-      query.skip = range.startIndex
-      // 3
-      query.limit = range.endIndex - range.startIndex
->
-      query.findObjectsInBackgroundWithBlock(completionBlock)
+        let followingQuery = PFQuery(className: ParseFollowClass)
+        followingQuery.whereKey(ParseLikeFromUser, equalTo:PFUser.currentUser()!)
+>        
+        let postsFromFollowedUsers = Post.query()
+        postsFromFollowedUsers!.whereKey(ParsePostUser, matchesKey: ParseFollowToUser, inQuery: followingQuery)
+>        
+        let postsFromThisUser = Post.query()
+        postsFromThisUser!.whereKey(ParsePostUser, equalTo: PFUser.currentUser()!)
+>        
+        let query = PFQuery.orQueryWithSubqueries([postsFromFollowedUsers!, postsFromThisUser!])
+        query.includeKey(ParsePostUser)
+        query.orderByDescending(ParsePostCreatedAt)
+>        
+        // 2
+        query.skip = range.startIndex
+        // 3
+        query.limit = range.endIndex - range.startIndex
+>        
+        query.findObjectsInBackgroundWithBlock(completionBlock)
     }
 
-1. As discussed, we modify the method signature to accept a `Range` argument. That `Range` argument will define which portions of the timeline will be loaded. Ranges in Swift are defined like this: `5..10` (10 included) or 5..<10 (10 excluded).
+1. As discussed, we modify the method signature to accept a `Range` argument. That `Range` argument will define which portions of the timeline will be loaded. Range literals can be defined like this: `5..10` (10 included) or `5..<10` (10 excluded).
+
 2. `PFQuery` provides a `skip` property. That allows us - as suspected by the name - to define how many elements that match our query shall be skipped. This is the equivalent of the `startIndex` of our `range`, so all we need to do is a simple assignment.
+
 3. We make use of an additional property of `PFQuery`: `limit`. The `limit` property defines how many elements we want to load. We calculate the size of the range (by subtracting the `startIndex` from the `endIndex`) and pass the result to the `limit` property.
 
 This wasn't too difficult! Now we are prepared to use the `TimelineComponent` in our app!
@@ -69,7 +70,7 @@ The very first step is importing the `ConvenienceKit` framework into the `Timeli
 >
     import ConvenienceKit
 
-Next, our `TimelineViewController` needs to implement the `TimelineComponentTarget` protocol. The `TimelineComponent` needs our cooperation in a couple of different ways, this protocol defines which methods and properties need to be available on classes that want to work with it.
+Next, our `TimelineViewController` needs to implement the `TimelineComponentTarget` protocol. The `TimelineComponent` needs our cooperation in a couple of different ways, and this protocol defines which methods and properties need to be available on classes that want to work with it.
 
 > [action]
 Extend the class definition of `TimelineViewController` as following:
@@ -80,15 +81,15 @@ Now we are ready to implement the `TimelineComponentTarget` protocol!
 
 ##Implementing the TimelineComponentTarget Protocol
 
-Let's first take a look at what the protocol looks like. You can _CMD+Click_ onto the protocol name and Xcode will jump to the protocol definition:
+Let's first take a look at what the protocol looks like. You can _⌘+Click_ onto the protocol name and Xcode will jump to the protocol definition:
 
     public protocol TimelineComponentTarget: class {
-      typealias ContentType
+        typealias ContentType
 
-      var defaultRange: Range<Int> { get }
-      var additionalRangeSize: Int { get }
-      var tableView: UITableView! { get }
-      func loadInRange(range: Range<Int>, completionBlock: ([ContentType]?) -> Void)
+        var defaultRange: Range<Int> { get }
+        var additionalRangeSize: Int { get }
+        var tableView: UITableView! { get }
+        func loadInRange(range: Range<Int>, completionBlock: ([ContentType]?) -> Void)
     }
 
 We can ignore the `typealias`, which leaves use with four requirements for classes that implement the `TimelineComponentTarget` protocol:
@@ -108,33 +109,38 @@ Add the following two properties to the `TimelineViewController` class:
     let defaultRange = 0...4
     let additionalRangeSize = 5
 
-We are defining that we start by showing the latest 5 posts (index 0 to 4). Whenever a user reaches the end of the timeline, we load an additional 5. You could change the behavior of your timeline by simply changing these values!
+By setting `defaultRange` to `0...4`, we are telling the `TimelineComponent` that we want the timeline to initially show the newest 5 posts (index 0 to 4). When the user reaches the end of the timeline, we load an additional 5. You can change the behavior of your timeline by simply changing these values!
 
 To conform to the `TimelineComponentTarget` protocol we need to implement one more method: `loadInRange`. Currently we are performing our timeline query inside of the `viewDidAppear` method. We first perform a query, then we update the table view.
 
-When working with the `TimelineComponent`, we are no longer responsible for updating the table view and starting the queries. Instead that will be handled for us by the component.
+When working with the `TimelineComponent`, we are no longer responsible for updating the table view and starting the queries. Instead that will be handled for us.
 
-All we need to do is implement the `loadInRange` method so that the component can call it and receive the posts on a user's timeline.
+All we need to do is implement the `loadInRange` method so that the `TimelineComponent` can call it and receive the posts on a user's timeline.
 
+> [action]
+> 
 **Based on the query code in the `viewDidAppear` method, can you come up with an implementation of `loadInRange`?**
+
+<!-- html comment to break boxes -->
 
 > [solution]
 > One valid solution looks like this:
 >
     func loadInRange(range: Range<Int>, completionBlock: ([Post]?) -> Void) {
-      // 1
-      ParseHelper.timelineRequestForCurrentUser(range) {
-        (result: [PFObject]?, error: NSError?) -> Void in
-          // 2
-          let posts = result as? [Post] ?? []
-          // 3
-          completionBlock(posts)
-      }
+        // 1
+        ParseHelper.timelineRequestForCurrentUser(range) { (result: [PFObject]?, error: NSError?) -> Void in
+            // 2
+            let posts = result as? [Post] ?? []
+            // 3
+            completionBlock(posts)
+        }
     }
 >
 >
-1. We start by calling the `timelineRequestForCurrentUser` method. Earlier we have extended the method to take a `range` parameter. We now simply pass on the range that we received in the `range` argument.
+1. We start by calling the `timelineRequestForCurrentUser` method. Earlier we extended the method to take a `range` parameter. Now we can simply pass the range that we received in the `range` argument.
+>
 2. In the callback of the query we check whether or not we have received a result. If the result is `nil` we store an empty array in the `posts` variable.
+>
 3. We pass the `posts` that have been loaded back to the `TimelineComponent` by calling the `completionBlock`.
 
 Now our class fully conforms to the `TimelineComponentTarget` protocol! However, there are a few additional changes we need to make to the `TimelineViewController`.
@@ -143,19 +149,19 @@ Now our class fully conforms to the `TimelineComponentTarget` protocol! However,
 
 There are two events that the `TimelineComponent` needs to know about in order to do its job correctly:
 
-1. The component needs to know when the table view becomes visible so that it can load the initial set of data.
+1. The component needs to know when the table view first becomes visible so that it can load the initial set of data.
 2. The component needs to know which cells are currently being displayed so that it can load more cells as soon as the user has reached the latest cell in the Timeline.
 
 Let's start by informing the component when the table view becomes visible.
 
 ###Triggering the Initial Timeline Request
 
-The `TimelineComponent` wants us to call the `loadInitialIfRequired()` method when that happens. We can implement that method call inside of the `viewDidAppear` method, which is called as soon as the table view becomes visible.
+The `TimelineComponent` wants us to call the `loadInitialIfRequired()` method when the initial Timeline request happens. We can implement that method call inside of the `viewDidAppear` method, which is called as soon as the table view becomes visible.
 
 Since we have implemented the timeline query inside of the `loadInRange` method, we also no longer need it in the `viewDidAppear` method. So this is a good chance to clean that method up.
 
 > [action]
-Change the `viewDidAppear` method of the `TimelineViewController` class to look as following:
+Change the `viewDidAppear` method of the `TimelineViewController` class to look like this:
 >
     override func viewDidAppear(animated: Bool) {
       super.viewDidAppear(animated)
@@ -163,37 +169,37 @@ Change the `viewDidAppear` method of the `TimelineViewController` class to look 
       timelineComponent.loadInitialIfRequired()
     }
 
-Don't worry, we will declare timelineComponent in just a moment. Now the `TimelineComponent` will make an initial timeline request, if no data has been loaded so far. If the component has already queried the server and stored a user's posts, this method call does nothing at all. After the initial load, posts will only be reloaded if the user manually chooses to do so (by using the pull-to-refresh mechanism).
+Don't worry, we will declare timelineComponent in just a moment. By placing the `loadInitialIfRequired` call in `viewDidAppear`, we ensure that `TimelineComponent` will make an initial timeline request when the timeline is first displayed. `TimelineComponent` is smart enough such that if it has already queried the server and stored the user's posts, this method call does nothing at all. After the initial load, posts will only be reloaded if the user manually chooses to do so by using the pull-to-refresh mechanism.
 
 Next we need to inform the `TimelineComponent` which cell is currently visible.
 
 ###Informing the TimelineComponent about visible cells
 
-Whenever a cell becomes visible, we are required to call the `targetWillDisplayEntry:` method and pass the index of the currently displayed entry.
+Whenever a cell becomes visible, we are required to call the `targetWillDisplayEntry:` method and pass the index of the currently displayed cell. That way the `TimelineComponent` will know when the user has scrolled to the bottom of the timeline.
 
 **Where can we place the code that calls that method?**
 
-One option would be the `cellForRowAtIndexPath:` method that is called whenever the table view requests a cell. However, there are some cases where this method is called but the requested cell is not actually displayed - so this solution could lead to some bugs in our app.
+One option would be the `cellForRowAtIndexPath:` method that is called when the table view requests a cell. However, there are some cases where this method is called but the requested cell is not actually displayed - so this solution could lead to some bugs in our app.
 
 Instead, there's a method that's part of the `UITableViewDelegate` protocol that is perfect for our purposes:
 
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath)
 
-This method is called whenever our TableView is about to display a cell! So let's implement that method!
+This method is called whenever our table view is about to display a cell! So let's implement that method.
 
 > [action]
 > Add the following `extension` **after** the class definition of `TimelineViewController`:
 >
     extension TimelineViewController: UITableViewDelegate {
 >
-      func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+        func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
 >
-        timelineComponent.targetWillDisplayEntry(indexPath.row)
-      }
+            timelineComponent.targetWillDisplayEntry(indexPath.row)
+        }
 >
     }
 
-To keep our code well structured, we implement the new protocol in a separate class `extension`. The implementation of this method is fairly simple - we directly call the `timelineComponent` and inform it that a cell has been displayed.
+To help keep our code organized, we implement the new protocol in a separate class `extension`. The implementation of this method is fairly simple - we directly call the `timelineComponent` and inform it that a cell has been displayed.
 
 Note that this code won't work yet. First, we haven't declared the `timelineComponent` property yet. Second, the `TimelineViewController` isn't the `delegate` of the table view yet. Currently, it is only the `dataSource`.
 
@@ -202,7 +208,7 @@ Let's set ourselves up as the table view's delegate. After that, we'll initializ
 > [action]
 > Open _Main.storyboard_ and connect the outlet of the table view's delegate to the `TimelineViewController`:
 >
-> ![image](table_view_delegate.png)
+> ![Connecting table view delegate to the TimelineViewController](table_view_delegate.png)
 
 ##Initializing and storing the TimelineComponent
 
@@ -221,13 +227,13 @@ Next we will add code that creates an instance of the `TimelineComponent`. We'll
 > Extend the `viewDidLoad` method so that it initializes a `TimelineComponent`
 >
     override func viewDidLoad() {
-      super.viewDidLoad()
+        super.viewDidLoad()
 >
-      timelineComponent = TimelineComponent(target: self)
-      self.tabBarController?.delegate = self
+        timelineComponent = TimelineComponent(target: self)
+        self.tabBarController?.delegate = self
     }
 
-The `TimelineComponent` only takes one argument when it's being initialized: the `target`. The `target` is the object to which the `TimelineComponent` shall add its functionality. In our case that's the `TimelineViewController`, so we pass `self` to the `initializer`.
+The `TimelineComponent` only takes one argument when it's being initialized: the `target`. The `target` is the object to which the `TimelineComponent` shall add its functionality. In our case that's the `TimelineViewController`, so we pass `self` to the initializer.
 
 ##Removing the posts array
 
@@ -239,41 +245,40 @@ One last step remains! We need to remove the `posts` property that currently sto
 This means we also need to modify two locations where this property was used. Instead of accessing the `posts` property we now need to access the `timelineComponent.content` property.
 
 > [action]
-> Change the `tableView(_, numberOfRowsInSection:)` method to look as following:
+> Change the `tableView(_:numberOfRowsInSection:)` method to look as follows:
 >
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-      return timelineComponent.content.count
+        return timelineComponent.content.count
     }
 
 And finally, we need to update the `tableView(_, cellForRowAtIndexPath:)` method as well.
 
 > [action]
 >
-> Update the `tableView(_, cellForRowAtIndexPath:)` method to look as following:
+> Update the `tableView(_:cellForRowAtIndexPath:)` method to look as follows:
 >
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-      let cell = tableView.dequeueReusableCellWithIdentifier("PostCell") as! PostTableViewCell
+        let cell = tableView.dequeueReusableCellWithIdentifier("PostCell") as! PostTableViewCell
 >
-      let post = timelineComponent.content[indexPath.row]
-      post.downloadImage()
-      post.fetchLikes()
-      cell.post = post
+        let post = timelineComponent.content[indexPath.row]
+        post.downloadImage()
+        post.fetchLikes()
+        cell.post = post
 >
-      return cell
+        return cell
     }
 
-Okay, time to test our app after these major changes! Your timeline now should be working just as shown
-in the video below:
+Okay, time to test our app after these major changes! Your timeline now should be working just as shown in the video below:
 
 <video width="100%" height="400pt" controls>
   <source src="https://s3.amazonaws.com/mgwu-misc/SA2015/BetterTimlineWorking_small.mov" type="video/mp4">
 
-When you reach the 5th post, additional posts are loaded and displayed!
+When you reach the 5th post, additional posts are loaded and displayed! Also if you scroll to the top and pull down, you'll notice that pull-to-refresh functionality was added.
 
 #Conclusion
 
-In this chapter, you learned two important concepts: First, we modified our timeline query to only load a certain range of posts. That is extremely important! It is very inefficient to load data that the user doesn't need; using the `skip` and `limit` properties of `PFQuery` you will be able to load exactly the portion of your data that is currently relevant to your user.
+In this chapter, you learned two important concepts: First, we modified our timeline query to only load a certain range of posts. This is extremely important! It is very inefficient to load data that the user doesn't need; using the `skip` and `limit` properties of `PFQuery` you will be able to load exactly the portion of your data that is currently relevant to your user.
 
-You have also learned how to use the `TimelineComponent`. If you happen to build an app that contains a timeline, this component will be very useful!
+You have also learned how to use the `TimelineComponent`. If you happen to build an app that contains a timeline, this component will be very useful.
 
 In the next step we will take a little step back and review all the things you have learned through this tutorial so far.
