@@ -92,7 +92,7 @@ Let's first take a look at what the protocol looks like. You can _⌘+Click_ ont
         func loadInRange(range: Range<Int>, completionBlock: ([ContentType]?) -> Void)
     }
 
-We can ignore the `typealias`, which leaves use with four requirements for classes that implement the `TimelineComponentTarget` protocol:
+We can ignore the `typealias`, which leaves us with four requirements for classes that implement the `TimelineComponentTarget` protocol:
 
 1. **`defaultRange`**: A property that defines how many posts should be loaded initially
 2.  **`additionalRangeSize`**: A property that defines how many additional posts should be loaded once the user reaches the bottom of the timeline
