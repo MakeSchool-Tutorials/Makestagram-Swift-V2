@@ -50,6 +50,11 @@ Now we can create a _Podfile_ that will allow us to declare dependencies for our
 >
     pod init
 
+<!--  -->
+
+> [info]
+> You can change directories to the root directory of your project by typing `cd ` (make sure you put a space after `cd`) and then dragging the project folder into Terminal. ![ms-video](https://s3.amazonaws.com/mgwu-misc/SA2015/cd_drag_and_drop.mov)
+
 Now a _Podfile_ with some skeleton content will be created. Open the _Podfile_ in your favorite text editor. It should look like this:
 
 ```
@@ -80,28 +85,28 @@ Now we are ready to add our dependencies to this file.
 >
 	# Uncomment this line to define a global platform for your project
 	platform :ios, '9.0'
->	
+>
 	target 'Makestagram' do
 	  # Comment this line if you're not using Swift and don't want to use dynamic frameworks
 	  use_frameworks!
->	
+>
 	  pod 'Bond', '4.0.0'
 	  pod "ConvenienceKit"
 	  pod 'Parse'
 	  pod 'ParseFacebookUtilsV4'
 	  pod 'ParseUI'
->	
+>
 	  target 'MakestagramTests' do
 	    inherit! :search_paths
 	    # Pods for testing
 	  end
->	
+>
 	end
 >
 > Then, return to the command line and run:
 >
     pod install
-> This step may take some time the first time you run it, up to 10 or 15 minutes. 
+> This step may take some time the first time you run it, up to 10 or 15 minutes.
 
 Now your dependencies will be download and installed.
 
