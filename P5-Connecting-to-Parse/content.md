@@ -78,11 +78,13 @@ Copy your *APP_ID* and *SERVER_URL* into the Parse SDK setup. Make sure you make
 Now we should be ready to work with the Parse SDK! In a moment we will see if you've set everything up correctly.
 
 But before we do, lets take a quick look at that code again. Notice anything weird with it? `$0`? What does that mean? Well, that is actually shorthand for this:
->
-	let configuration = ParseClientConfiguration { (configuration) -> Void in
-	    configuration.applicationId = "makestagram"
-	    configuration.server = "https://makestagram-parse-abc.herokuapp.com/parse"
-	}
+
+```
+let configuration = ParseClientConfiguration { (configuration) -> Void in
+    configuration.applicationId = "makestagram"
+    configuration.server = "https://makestagram-parse-abc.herokuapp.com/parse"
+}
+```
 
 In this case, Swift lets you avoid defining the closure and just jump into it with `$0` representing the first argument it would have taken.
 
@@ -99,24 +101,25 @@ Implementing a fake login mechanism involves two steps:
 2. Adding code to the `AppDelegate` to log in as that test user
 
 Parse allows us to add data directly to the database through the browser by creating new *Rows* in our Parse tables. This is a great feature for testing!
+
 > [action]
 Add a test user to your Parse database by following the steps in the video below. ![ms-video](https://s3.amazonaws.com/mgwu-misc/Makestagram/create-test-user.mov)
 >
-   Click the *User* class in the left column. Then, in the top right corner, click the *Edit* button and *Add a row* option. This will create a new blank User entry. Double click into the *username* column of this row and enter *test* as a username. Then double click the *password* column and enter *test* as a password.
+> Click the *User* class in the left column. Then, in the top right corner, click the *Edit* button and *Add a row* option. This will create a new blank User entry. Double click into the *username* column of this row and enter *test* as a username. Then double click the *password* column and enter *test* as a password.
 >
-You have created your first set of data for this application! Now we can use this test user to log in on the iOS App.
+> You have created your first set of data for this application! Now we can use this test user to log in on the iOS App.
 >
-Extend the `AppDelegate` to log in with our test credentials. We'll also add an `if` statement to test if the login was successful. Change the relevant code in the `AppDelegate` to look like this:
+> Extend the `AppDelegate` to log in with our test credentials. We'll also add an `if` statement to test if the login was successful. Change the relevant code in the `AppDelegate` to look like this:
 >
 ```
 func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
 >
-	// Set up the Parse SDK
+    // Set up the Parse SDK
     let configuration = ParseClientConfiguration {
         $0.applicationId = "makestagram"
         $0.server = "https://makestagram-parse-abc.herokuapp.com/parse"
-   	 }
-   	 Parse.initializeWithConfiguration(configuration)
+    }
+    Parse.initializeWithConfiguration(configuration)
 >
     do {
         try PFUser.logInWithUsername("test", password: "test")
