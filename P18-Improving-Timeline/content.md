@@ -28,7 +28,7 @@ Modify the `timelineRequestForCurrentUser` method to look as follows:
 >
     static func timelineRequestForCurrentUser(range: Range<Int>, completionBlock: PFQueryArrayResultBlock) {
         let followingQuery = PFQuery(className: ParseFollowClass)
-        followingQuery.whereKey(ParseLikeFromUser, equalTo:PFUser.currentUser()!)
+        followingQuery.whereKey(ParseFollowFromUser, equalTo:PFUser.currentUser()!)
 >        
         let postsFromFollowedUsers = Post.query()
         postsFromFollowedUsers!.whereKey(ParsePostUser, matchesKey: ParseFollowToUser, inQuery: followingQuery)
