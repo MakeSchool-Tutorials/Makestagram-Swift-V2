@@ -62,8 +62,7 @@ Ok, our basic button is set up. Now we need to take care of some Auto Layout!
 
 While working on the Auto Layout constraints for the next few steps, you might run into a bug in Interface Builder. Sometimes your constraints won't correctly influence the size of the UI elements. In such cases you can update the value of the constraint to some other value - then immediately set it back to the old value. Here's a short video that illustrates the issue:
 
-<video width="100%" controls>
-  <source src="https://s3.amazonaws.com/mgwu-misc/SA2015/IB_Constraints_Bug_small.mov" type="video/mp4"></video>
+![ms-video](https://s3.amazonaws.com/mgwu-misc/SA2015/IB_Constraints_Bug_small.mov)
 
 Even though the _Traliling Space to Superview_ was set to _50_ at the beginning and at the end of the video, the size of the label appears differently. Give this a shot in case you run into similar issues throughout the next steps!
 
@@ -190,8 +189,8 @@ Change the appearance of the label to look as following (checkout the video belo
 ![label appearance settings](appearance_label.png)
 
 You can grab the exact color for the Label from the Action button using the color picker as shown in the video below:
-<video width="100%" controls>
-  <source src="https://s3.amazonaws.com/mgwu-misc/SA2015/Color_picker_small.mov" type="video/mp4"></video>
+
+![ms-video](https://s3.amazonaws.com/mgwu-misc/SA2015/Color_picker_small.mov)
 
 ## One More Thing...
 

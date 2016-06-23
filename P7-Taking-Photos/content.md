@@ -83,8 +83,7 @@ If the view controller **isn't** a `PhotoViewController`, we return `true` and l
 
 With this code in place, it's time to run the app. You should see the same behavior as in this video:
 
-<video width="100%" controls>
-  <source src="https://s3.amazonaws.com/mgwu-misc/SA2015/PhotoButton_small.mov" type="video/mp4">
+![ms-video](https://s3.amazonaws.com/mgwu-misc/SA2015/PhotoButton_small.mov)
 
 When you tap the left or the right tab bar item, they are selected. When you tap the middle button, you see our console output instead!
 
@@ -120,8 +119,7 @@ Open the folder that contains your Xcode project in Finder: and create a new fol
 ![Right click Makestagram group, show in finder](show_in_finder.png)
 ![Create PhotoTaking folder](photo_taking_folder.png)
 Then add this new folder to your Xcode project. As you're browsing, you'll see an *Options* button at the bottom of the dialogue. Expand that and make sure *Create Groups* is selected, and not *Create Folder References*:
-<video width="100%" controls>
-  <source src="https://s3.amazonaws.com/mgwu-misc/SA2015/AddPhotoFolder_small.mov" type="video/mp4">
+![ms-video](https://s3.amazonaws.com/mgwu-misc/SA2015/AddPhotoFolder_small.mov)
 
 You should always add new folders with this two-step process. If you create a new group directly in Xcode, it will not automatically create a new folder on your file system. That results in Xcode projects that have a structure that is different from the folder structure - another potential way of creating messy projects.
 

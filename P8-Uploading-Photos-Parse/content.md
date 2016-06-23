@@ -40,7 +40,7 @@ You can see that the actual image file is stored _as part of the Post_. This mea
 Files are handled a little differently compared to regular objects in Parse, so we don't use the `PFObject` class to create them. Instead we used the specialized `PFFile` class.
 
 > [action]
-> 
+>
 **Try to implement this step on your own!** First create a PFFile with the image data, then a PFObject for the post. Remember that the post needs a reference to the uploaded image! Place your solution in the `PhotoHelper` callback within `TimelineViewController`. Don't forget to `import Parse`. You will need to use a function called `UIImageJPEGRepresentation` to convert the `UIImage` into `NSData` to be passed to the `PFFile`.
 
 <!-- html comment to break boxes -->
@@ -75,9 +75,7 @@ In the next step we create a `PFObject` of type post. We assign the `"imageFile"
 
 Now it's time to test our solution! Run the app and select an image. You should see a similar result as shown below:
 
-<video width="100%" controls>
-  <source src="https://s3.amazonaws.com/mgwu-misc/SA2015/PhotoUpload_Working_small.mov" type="video/mp4">
-</video>
+![ms-video](https://s3.amazonaws.com/mgwu-misc/SA2015/PhotoUpload_Working_small.mov)
 
 Now let's first see if the upload actually worked as expected.
 

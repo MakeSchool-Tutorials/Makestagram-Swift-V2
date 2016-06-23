@@ -46,10 +46,10 @@ Add an import statement (`import Parse`) to import the Parse SDK into the `AppDe
 >
       ...
 
-Next, we need to replace the current placeholders for the `APP_ID` and the `SERVER_URL` with the correct values for our Parse server that we set up. 
+Next, we need to replace the current placeholders for the `APP_ID` and the `SERVER_URL` with the correct values for our Parse server that we set up.
 
 > [info] If you've forgotten the exact values of your `APP_ID` and `SERVER_URL`, you can find them like this:
-> 
+>
 > 1. Go to the [Heroku Dashboard](https://dashboard.heroku.com/apps).
 > 1. Click the name of your Parse Server app.
 > 1. Click the settings button ![Parse app settings button](parse-app-settings.png)
@@ -100,9 +100,8 @@ Implementing a fake login mechanism involves two steps:
 
 Parse allows us to add data directly to the database through the browser by creating new *Rows* in our Parse tables. This is a great feature for testing!
 > [action]
-Add a test user to your Parse database by following the steps in the video below. <video width="100%" controls>
-  <source src="https://s3.amazonaws.com/mgwu-misc/Makestagram/create-test-user.mov" type="video/mp4">
-</video>
+Add a test user to your Parse database by following the steps in the video below. ![ms-video](https://s3.amazonaws.com/mgwu-misc/Makestagram/create-test-user.mov)
+>
    Click the *User* class in the left column. Then, in the top right corner, click the *Edit* button and *Add a row* option. This will create a new blank User entry. Double click into the *username* column of this row and enter *test* as a username. Then double click the *password* column and enter *test* as a password.
 
 You have created your first set of data for this application! Now we can use this test user to log in on the iOS App.

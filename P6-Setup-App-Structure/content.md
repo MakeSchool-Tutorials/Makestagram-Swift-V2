@@ -73,10 +73,8 @@ Great! When you run the app now, you should see a tab bar with two items:
 The default tab bar comes with two view controllers; however, we need three view controllers for **Makestagram**. Lets add the third view controller now.
 
 > [action]
-Add a third view controller, as shown in the video below. Add a blank view controller, then *control* (⌃) click and drag from the Tab Bar Controller to the blank view controller, and select "Relationship segue: view controller". 
-<video width="100%" controls>
-  <source src="https://s3.amazonaws.com/mgwu-misc/SA2015/AddViewController_TabBar_Small.mov" type="video/mp4">
-</video>
+Add a third view controller, as shown in the video below. Add a blank view controller, then *control* (⌃) click and drag from the Tab Bar Controller to the blank view controller, and select "Relationship segue: view controller".
+![ms-video](https://s3.amazonaws.com/mgwu-misc/SA2015/AddViewController_TabBar_Small.mov)
 
 We now have all of the required view controllers set up!
 
@@ -152,9 +150,7 @@ Now all of your tab bar items should have images that are nicely centered.
 
 Just in case you didn't set up the view controllers in the correct order, I want to show you how you can reorder them. Select the tab bar view controller in your storyboard, then simply drag the tab bar items to rearrange them:
 
-<video width="100%" controls>
-  <source src="https://s3.amazonaws.com/mgwu-misc/SA2015/ReorderTabBarItems_small.mov" type="video/mp4">
-</video>
+![ms-video](https://s3.amazonaws.com/mgwu-misc/SA2015/ReorderTabBarItems_small.mov)
 
 Now we have a nice looking Tab Bar that connects to the three View Controllers of our app.
 
@@ -164,9 +160,7 @@ To finish this section, let's create the source code files for all three view co
 
 > [action]
 Create the `TimelineViewController` class as a subclass of `UIViewController` as shown in the video below:
-<video width="100%" controls>
-  <source src="https://s3.amazonaws.com/mgwu-misc/SA2015/Timeline_NewViewController_small.mov" type="video/mp4">
-</video>
+![ms-video](https://s3.amazonaws.com/mgwu-misc/SA2015/Timeline_NewViewController_small.mov)
 **Repeat these steps** to create a `PhotoViewController` and a `FriendSearchViewController`, which also should be subclasses of `UIViewController`.
 
 When you're done you should have three View Controllers:
