@@ -103,7 +103,7 @@ Parse allows us to add data directly to the database through the browser by crea
 Add a test user to your Parse database by following the steps in the video below. ![ms-video](https://s3.amazonaws.com/mgwu-misc/Makestagram/create-test-user.mov)
 >
    Click the *User* class in the left column. Then, in the top right corner, click the *Edit* button and *Add a row* option. This will create a new blank User entry. Double click into the *username* column of this row and enter *test* as a username. Then double click the *password* column and enter *test* as a password.
-
+>
 You have created your first set of data for this application! Now we can use this test user to log in on the iOS App.
 >
 Extend the `AppDelegate` to log in with our test credentials. We'll also add an `if` statement to test if the login was successful. Change the relevant code in the `AppDelegate` to look like this:
