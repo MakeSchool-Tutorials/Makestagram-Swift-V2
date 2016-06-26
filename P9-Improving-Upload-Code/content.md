@@ -162,9 +162,9 @@ In case you haven't worked with _threads_ before, you will need a little bit of 
 
 We've prepared a lecture that discusses many aspects of threading in detail. All of the topics are covered within this tutorial as well, but watching this lecture will help you solidify your knowledge of this fairly complex topic:
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/M6CqVoz1tUo" frameborder="0" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/BnvMFgMHebU" frameborder="0" allowfullscreen></iframe>
 
-You can download the slides [here](https://s3.amazonaws.com/mgwu-misc/SA2015/LectureSlides/Threads_Asynchrony.pdf).
+You can download the slides [here](https://github.com/MakeSchool-Tutorials/Makestagram-Swift-V2/raw/master/P9-Improving-Upload-Code/Asynchrony.pdf).
 
 ##A Brief Introduction to Threading
 
