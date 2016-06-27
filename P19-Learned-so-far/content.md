@@ -100,7 +100,7 @@ Throughout the tutorial you learned how to employ _best practices_ for many thin
 
 #Where to go from here?
 
-You have two options. You have learned enough to get started on your own app and come back if you are interested in any of the tweaks and features that we will be implementing in the next steps.
+You have two options. You have learned enough to get started on your own app and come back if you are interested in any of the tweaks and features that we will be implementing in the next steps. If you want to do this, talk to an instructor!
 
 Or you can continue with this tutorial and learn what goes into finishing the entire _Makestagram_ app.
 
