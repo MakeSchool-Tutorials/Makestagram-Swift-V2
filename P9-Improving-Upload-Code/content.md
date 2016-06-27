@@ -208,8 +208,8 @@ Even though the theory might sound a little bit complicated, the implementation 
 
 By calling the `saveInBackground` method, uploading the data happens on a background thread, and our app's UI isn't frozen by something blocking the main thread.
 
+> [action]
 Now to improve our code we are going to use `saveInBackgroundWithBlock` and `guard`.
-
 >
     func uploadPost() {
         if let image = image {
