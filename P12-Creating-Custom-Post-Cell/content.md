@@ -138,6 +138,25 @@ Now you can run the app again. And for the first time you should see our photos 
 
 ![timeline with photos](photo_download_working.png)
 
+> [info]
+> You may find that your app isn't loading any images for the posts you just imported. You might see an error message in your console that looks like this:
+> 
+> ```
+> 2016-06-26 13:52:37.811 Makestagram[34589:6243499] [Error]: The resource could not be loaded because the App Transport Security policy requires the use of a secure connection. (Code: 100, Version: 1.13.0)
+> ```
+> 
+> This is because of a new security feature introduced in iOS 9 called *App Transport Security*. Apple strongly prefers that all data retreived by an application from the internet is sent over HTTPS, which is like HTTP, except encrypted. This prevents computers on the route between your phone and the data server from listening in on the transmission, which is commonly called a [Man-in-the-middle attack](https://en.wikipedia.org/wiki/Man-in-the-middle_attack). 
+>
+> The way our Parse server is configured, it serves most data over HTTPS, which is great. However, it serves large files (like our image files) over HTTP for better speed. 
+> 
+> To fix this issue, you can modify your *Info.plist* to allow loading data over HTTP from your Parse server. The Info.plist stores configuration data for our app; you can find it under the *Supporting Files* group in your project.
+> 
+> Change your Info.plist to look like this. Be very careful that you write everything exactly the same, or it won't work! Make sure to change the server url to one that matches your server. You can find your server url by looking in your AppDelegate.swift.
+> 
+> ![Info.plist settings for App Tranport Security](./appTransportSecurity.png)
+> 
+> You may need to clean your project (*Product -> Clean*) after any changes to the Info.plist to make sure they're reflected in the app on device or simulator.
+
 That's awesome! This app is very slowly starting to look like a real photo sharing app!
 
 #A Note on Error Handling
