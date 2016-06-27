@@ -15,7 +15,7 @@ Additionally Parse provides an iOS library. This makes it easy to interact with 
 
 We have prepared a brief lecture that will introduce you to the core concepts of the Parse framework:
 
-![ms-video](https://www.youtube.com/embed/aolThcqQ6Ho)
+![ms-video-youtube](https://www.youtube.com/embed/aolThcqQ6Ho)
 
 You can download the slides [here](https://github.com/MakeSchool-Tutorials/Makestagram-Swift-V2/raw/master/P1-Parse-Intro-Setup/ParseIntro.pdf).
 
