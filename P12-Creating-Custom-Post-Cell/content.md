@@ -155,7 +155,7 @@ Now you can run the app again. And for the first time you should see our photos 
 > 
 > ![Info.plist settings for App Tranport Security](./appTransportSecurity.png)
 > 
-> You may need to clean your project (*Product -> Clean*) after any changes to the Info.plist to make sure they're reflected in the app on device or simulator.
+> **You will need to clean your project** (*Product -> Clean*) after any changes to the Info.plist to make sure they're reflected in the app on device or simulator.
 
 That's awesome! This app is very slowly starting to look like a real photo sharing app!
 
