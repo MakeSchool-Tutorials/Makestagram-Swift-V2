@@ -11,6 +11,11 @@ Time to pull up your browser again. If you're on the Parse Dashboard, click on y
 
 Let's first create the *User* class. Parse provides a template for this class which makes the setting it up pretty easy.
 
+> [info]
+> Depending on the version of Parse you have _this step may be unnecessary!_ Look under the Browser heading in the left to see if Parse has already created a user class for you. If it has, don't worry about creating one.
+
+<!-- html comment to break boxes -->
+
 > [action]
 First, select the *Create a class* button on the left hand side to create your first class:
 >
