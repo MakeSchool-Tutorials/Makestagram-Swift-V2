@@ -68,7 +68,7 @@ Even though the _Traliling Space to Superview_ was set to _50_ at the beginning 
 
 #### Defining Size and Layout
 
-Before designing your apps, you should at least glance over [Apple's Human Interface Guidelines for iOS](https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/MobileHIG/).
+Before designing your apps, you should at least glance over [Apple's Human Interface Guidelines for iOS](https://developer.apple.com/ios/human-interface-guidelines/).
 
 They contain many do's and don'ts for mobile developers and designers.  
 One part of the documentation discusses sizes of buttons:
